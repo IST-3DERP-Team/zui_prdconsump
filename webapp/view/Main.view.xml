@@ -1,0 +1,137 @@
+<mvc:View controllerName="zuiprdconsump.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc" 
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:uiL="sap.ui.layout"
+    xmlns:uiT="sap.ui.table"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:sfb="sap.ui.comp.smartfilterbar"
+    xmlns:core="sap.ui.core"
+    height="100%">
+    <Page id="page" enableScrolling="false" class="sapUiNoContentPadding" showHeader="false">
+        <content>
+            <uiL:Splitter height="100%">
+
+                <Panel height="100%">
+                    <sfb:SmartFilterBar id="sfbOutDel" entitySet="ZVB_3DERP_OUTDELFILTER" enableBasicSearch="true" search="onSearch" 
+                        persistencyKey="3DERP_OutDelKey" filterContainerWidth="14rem" useToolbar="true" showClearOnFB="true" initialise="onSFBInitialise">
+                        <sfb:controlConfiguration>
+                            <sfb:ControlConfiguration id="filterSbu" key="SBU" groupId="_BASIC" label="{ddtext>/SBU}" controlType="dropDownList" filterType="single"
+                                displayBehaviour="idOnly" mandatory="mandatory" index="0">
+                            </sfb:ControlConfiguration>
+                        </sfb:controlConfiguration>
+                        <sfb:layoutData>
+                            <FlexItemData shrinkFactor="0"/>
+                        </sfb:layoutData>
+                    </sfb:SmartFilterBar>
+
+                    <uiT:Table id="ioTab"
+                        class="tablePadding"
+                        rows="{io>/results}"
+                        visibleRowCountMode="Auto"
+                        showColumnVisibilityMenu="true"
+                        enableColumnFreeze="true"
+                        enableCellFilter="true"
+                        selectionMode="Single"
+                        firstVisibleRowChanged="onFirstVisibleRowChanged"
+                        cellClick="onCellClick"
+                        sort="onSorted"
+                        filter="onFilter"
+                        columnFreeze="onColumnUpdated"
+                        columnMove="onColumnUpdated"
+                        columnResize="onColumnUpdated"
+                        columnSelect="onColumnUpdated"
+                        columnVisibility="onColumnUpdated"
+                        rowSelectionChange="onRowSelectionChange">
+                        <uiT:extension>
+                            <Toolbar>
+                                <ToolbarSpacer/>
+                                <Button id="btnSearchIO" 
+                                    icon="sap-icon://search"
+                                    press="onSearchIO"
+                                    visible="true"/>
+                                <Button id="btnRefreshIO" 
+                                    icon="sap-icon://refresh"
+                                    press="onRefreshIO"
+                                    visible="true"/>
+                            </Toolbar>
+                        </uiT:extension>
+                        <uiT:layoutData>
+                            <FlexItemData growFactor="1" baseSize="0%"/>
+                        </uiT:layoutData>
+                    </uiT:Table>
+                </Panel>
+                <uiL:layoutData>
+                    <uiL:SplitterLayoutData size="50%" />
+                </uiL:layoutData>
+
+                <uiL:Splitter orientation="Vertical">
+                    
+                    <uiT:Table id="stockTab"
+                        class="tablePadding"
+                        rows="{stock>/results}"
+                        visibleRowCountMode="Auto"
+                        showColumnVisibilityMenu="true"
+                        enableColumnFreeze="true"
+                        enableCellFilter="true"
+                        selectionMode="Single"
+                        firstVisibleRowChanged="onFirstVisibleRowChanged"
+                        cellClick="onCellClick"
+                        sort="onSorted"
+                        filter="onFilter"
+                        columnFreeze="onColumnUpdated"
+                        columnMove="onColumnUpdated"
+                        columnResize="onColumnUpdated"
+                        columnSelect="onColumnUpdated"
+                        columnVisibility="onColumnUpdated"
+                        rowSelectionChange="onRowSelectionChange">
+                        <uiT:extension>
+                            <Toolbar>
+                                <ToolbarSpacer/>
+                                <Button id="btnRefreshStock" 
+                                    icon="sap-icon://refresh"
+                                    press="onRefreshStock"
+                                    visible="true"/>
+                            </Toolbar>
+                        </uiT:extension>
+                        <uiT:layoutData>
+                            <uiL:SplitterLayoutData size="50%" />
+                        </uiT:layoutData>
+                    </uiT:Table>
+
+                    <uiT:Table id="matDocTab"
+                        class="tablePadding"
+                        rows="{matDoc>/results}"
+                        visibleRowCountMode="Auto"
+                        showColumnVisibilityMenu="true"
+                        enableColumnFreeze="true"
+                        enableCellFilter="true"
+                        selectionMode="Single"
+                        firstVisibleRowChanged="onFirstVisibleRowChanged"
+                        cellClick="onCellClick"
+                        sort="onSorted"
+                        filter="onFilter"
+                        columnFreeze="onColumnUpdated"
+                        columnMove="onColumnUpdated"
+                        columnResize="onColumnUpdated"
+                        columnSelect="onColumnUpdated"
+                        columnVisibility="onColumnUpdated"
+                        rowSelectionChange="onRowSelectionChange">
+                        <uiT:extension>
+                            <Toolbar>
+                                <ToolbarSpacer/>
+                                <Button id="btnRefreshMatDoc" 
+                                    icon="sap-icon://refresh"
+                                    press="onRefreshMatDoc"
+                                    visible="true"/>
+                            </Toolbar>
+                        </uiT:extension>
+                        <uiT:layoutData>
+                            <uiL:SplitterLayoutData size="auto" />
+                        </uiT:layoutData>
+                    </uiT:Table>
+                </uiL:Splitter>
+            </uiL:Splitter>
+        </content>
+    </Page>
+</mvc:View>

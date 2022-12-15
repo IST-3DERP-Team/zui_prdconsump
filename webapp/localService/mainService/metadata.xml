@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ZGW_3DERP_PRDCONSUMP_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="IO" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="IONO"/>
+                </Key>
+                <Property Name="PLANT" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="PLANT" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESCRIP" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="DESCRIP" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SEQNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Seq Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PROCESSCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="PROCESSCD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="STYLECD" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="STYLECD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SEASONCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Season Cd" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="STATUSCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Stat Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="Stock" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="MATNO"/>
+                </Key>
+                <Property Name="MATNO" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="MATNO" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESCRIP" Type="Edm.String" Nullable="false" MaxLength="1001" sap:unicode="false" sap:label="DESCRIP" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="BATCH" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Batch" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="QTY" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:unicode="false" sap:label="QTY" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="UOM" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Base Unit" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="unit-of-measure"/>
+                <Property Name="PROCESSCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="PROCESSCD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="MatDoc" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="MATDOCNO"/>
+                    <PropertyRef Name="MATDOCYEAR"/>
+                </Key>
+                <Property Name="MATDOCNO" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Material Doc." sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="MATDOCYEAR" Type="Edm.String" Nullable="false" MaxLength="4" sap:unicode="false" sap:label="Mat. Doc. Year" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="HDRTEXT" Type="Edm.String" Nullable="false" MaxLength="25" sap:unicode="false" sap:label="Doc.Header Text" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="POSTDT" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Posting Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="POSTBY" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="User Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityContainer Name="ZGW_3DERP_PRDCONSUMP_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="IOSet" EntityType="ZGW_3DERP_PRDCONSUMP_SRV.IO" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="StockSet" EntityType="ZGW_3DERP_PRDCONSUMP_SRV.Stock" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="MatDocSet" EntityType="ZGW_3DERP_PRDCONSUMP_SRV.MatDoc" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+            </EntityContainer>
+            <atom:link rel="self" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZGW_3DERP_PRDCONSUMP_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZGW_3DERP_PRDCONSUMP_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
