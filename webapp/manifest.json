@@ -42,6 +42,24 @@
                     "annotations": [],
                     "localUri": "localService/ZGW_3DERP_RFC_SRV/metadata.xml"
                 }
+            },
+            "ZVB_3DERP_PRDCONS_FILTER_CDS_Annotation": {
+                "uri": "/destinations/LTD888/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZVB_3DERP_PRDCONS_FILTER_CDS_VAN',Version='0001')/$value/",
+                "type": "ODataAnnotation",
+                "settings": {
+                    "localUri": "localService/ZVB_3DERP_PRDCONS_FILTER_CDS/ZVB_3DERP_PRDCONS_FILTER_CDS_Annotation.xml"
+                }
+            },
+            "ZVB_3DERP_PRDCONS_FILTER_CDS": {
+                "uri": "/sap/opu/odata/sap/ZVB_3DERP_PRDCONS_FILTER_CDS/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0",
+                    "annotations": [
+                        "ZVB_3DERP_PRDCONS_FILTER_CDS_Annotation"
+                    ],
+                    "localUri": "localService/ZVB_3DERP_PRDCONS_FILTER_CDS/metadata.xml"
+                }
             }
         }
     },
@@ -103,6 +121,15 @@
             },
             "ZGW_3DERP_RFC_SRV": {
                 "dataSource": "ZGW_3DERP_RFC_SRV",
+                "preload": true,
+                "settings": {
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "Inline",
+                    "refreshAfterChange": false
+                }
+            },
+            "ZVB_3DERP_PRDCONS_FILTER_CDS": {
+                "dataSource": "ZVB_3DERP_PRDCONS_FILTER_CDS",
                 "preload": true,
                 "settings": {
                     "defaultBindingMode": "TwoWay",

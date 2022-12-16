@@ -38,7 +38,11 @@ server:
             metadataXmlPath: ./webapp/localService/ZGW_3DERP_COMMON_SRV/metadata.xml
             mockdataRootPath: ./webapp/localService/ZGW_3DERP_COMMON_SRV/mockdata
           - urlPath: /sap/opu/odata/sap/ZGW_3DERP_RFC_SRV/
-            metadataPath: ./webapp/localService/ZGW_3DERP_RFC_SRV/metadata.xml
-            mockdataPath: ./webapp/localService/ZGW_3DERP_RFC_SRV/mockdata
+            generateMockData: true
+            metadataXmlPath: ./webapp/localService/ZGW_3DERP_RFC_SRV/metadata.xml
+            mockdataRootPath: ./webapp/localService/ZGW_3DERP_RFC_SRV/mockdata
+          - urlPath: /sap/opu/odata/sap/ZVB_3DERP_PRDCONS_FILTER_CDS/
+            metadataPath: ./webapp/localService/ZVB_3DERP_PRDCONS_FILTER_CDS/metadata.xml
+            mockdataPath: ./webapp/localService/ZVB_3DERP_PRDCONS_FILTER_CDS/mockdata
             generateMockData: true
         annotations: []

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="./sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="./sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="./sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="./sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="./sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ZVB_3DERP_PRDCONS_FILTER_CDS" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="ZVB_3DERP_PRDCONSUMP_IO_SHType" sap:label="Production Consumption - IO SH" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="IONO"/>
+                </Key>
+                <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:display-format="UpperCase" sap:text="DESCRIPTION" sap:label="IO Number" sap:quickinfo="Data Element  for 3DERP IO Number field"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="50"/>
+            </EntityType>
+            <EntityType Name="ZVB_3DERP_PRDCONSUMP_PLANT_SHType" sap:label="Production Consumption - Plant SH" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="PLANTCD"/>
+                </Key>
+                <Property Name="PLANTCD" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:text="DESCRIPTION" sap:label="Plant"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="30" sap:label="Name 1" sap:quickinfo="Name"/>
+                <Property Name="SBU" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="SBU" sap:quickinfo="ERP SBU"/>
+            </EntityType>
+            <EntityType Name="ZVB_3DERP_PRDCONSUMP_PRCS_SHType" sap:label="Production Consumption - Process SH" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="IONO"/>
+                    <PropertyRef Name="SEQNO"/>
+                    <PropertyRef Name="PROCESSCD"/>
+                </Key>
+                <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:display-format="UpperCase" sap:label="IO Number" sap:quickinfo="Data Element  for 3DERP IO Number field"/>
+                <Property Name="SEQNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:display-format="NonNegative" sap:label="Seq Number" sap:quickinfo="ERP Sequence Number"/>
+                <Property Name="PROCESSCD" Type="Edm.String" Nullable="false" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="ZVB_3DERP_PRDCONSUMP_SEASON_SHType" sap:label="Production Consumption - Season SH" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="SEASONCD"/>
+                    <PropertyRef Name="SBU"/>
+                </Key>
+                <Property Name="SEASONCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="DESCRIPTION" sap:label="Season Code" sap:quickinfo="ERP Season Code"/>
+                <Property Name="SBU" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="SBU" sap:quickinfo="ERP SBU"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="50" sap:label="Description"/>
+            </EntityType>
+            <EntityType Name="ZVB_3DERP_PRDCONSUMP_STYLE_SHType" sap:label="Production Consumption - Style SH" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="STYLECD"/>
+                </Key>
+                <Property Name="STYLECD" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="DESCRIPTION" sap:label="Style No" sap:quickinfo="ERP Style Number"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="256"/>
+            </EntityType>
+            <EntityType Name="ZVB_3DERP_PRDCONS_FILTERType" sap:label="Production Consumption - Filter" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="IONO"/>
+                    <PropertyRef Name="PROCESSCD"/>
+                    <PropertyRef Name="SEQNO"/>
+                </Key>
+                <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:display-format="UpperCase" sap:label="IO Number" sap:quickinfo="Data Element  for 3DERP IO Number field" sap:value-list="standard"/>
+                <Property Name="PROCESSCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:value-list="standard"/>
+                <Property Name="SEQNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:display-format="NonNegative" sap:label="Seq Number" sap:quickinfo="ERP Sequence Number"/>
+                <Property Name="PLANTCD" Type="Edm.String" MaxLength="10" sap:value-list="standard"/>
+                <Property Name="STYLECD" Type="Edm.String" MaxLength="40" sap:value-list="standard"/>
+                <Property Name="SEASONCD" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Season Code" sap:quickinfo="ERP Season Code" sap:value-list="standard"/>
+            </EntityType>
+            <EntityContainer Name="ZVB_3DERP_PRDCONS_FILTER_CDS_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="ZVB_3DERP_PRDCONSUMP_IO_SH" EntityType="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONSUMP_IO_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZVB_3DERP_PRDCONSUMP_PLANT_SH" EntityType="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONSUMP_PLANT_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZVB_3DERP_PRDCONSUMP_PRCS_SH" EntityType="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONSUMP_PRCS_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZVB_3DERP_PRDCONSUMP_SEASON_SH" EntityType="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONSUMP_SEASON_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZVB_3DERP_PRDCONSUMP_STYLE_SH" EntityType="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONSUMP_STYLE_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZVB_3DERP_PRDCONS_FILTER" EntityType="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONS_FILTERType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+            </EntityContainer>
+            <Annotations Target="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONS_FILTERType/IONO" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Production Consumption - IO SH"/>
+                        <PropertyValue Property="CollectionPath" String="ZVB_3DERP_PRDCONSUMP_IO_SH"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="IONO"/>
+                                    <PropertyValue Property="ValueListProperty" String="IONO"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONS_FILTERType/PROCESSCD" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Production Consumption - Process SH"/>
+                        <PropertyValue Property="CollectionPath" String="ZVB_3DERP_PRDCONSUMP_PRCS_SH"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="PROCESSCD"/>
+                                    <PropertyValue Property="ValueListProperty" String="PROCESSCD"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="IONO"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="SEQNO"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONS_FILTERType/PLANTCD" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Production Consumption - Plant SH"/>
+                        <PropertyValue Property="CollectionPath" String="ZVB_3DERP_PRDCONSUMP_PLANT_SH"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="PLANTCD"/>
+                                    <PropertyValue Property="ValueListProperty" String="PLANTCD"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="SBU"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONS_FILTERType/STYLECD" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Production Consumption - Style SH"/>
+                        <PropertyValue Property="CollectionPath" String="ZVB_3DERP_PRDCONSUMP_STYLE_SH"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="STYLECD"/>
+                                    <PropertyValue Property="ValueListProperty" String="STYLECD"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONS_FILTERType/SEASONCD" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Production Consumption - Season SH"/>
+                        <PropertyValue Property="CollectionPath" String="ZVB_3DERP_PRDCONSUMP_SEASON_SH"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="SEASONCD"/>
+                                    <PropertyValue Property="ValueListProperty" String="SEASONCD"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="SBU"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ZVB_3DERP_PRDCONS_FILTER_CDS.ZVB_3DERP_PRDCONS_FILTER_CDS_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Aggregation.ApplySupported">
+                    <Record>
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Rollup" EnumMember="None"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <atom:link rel="self" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZVB_3DERP_PRDCONS_FILTER_CDS/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZVB_3DERP_PRDCONS_FILTER_CDS/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

@@ -45,6 +45,11 @@ sap.ui.define([
                 this.getCaption();
                 this.getColumns();
 
+                var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_PRDCONS_FILTER_CDS");
+                var oSmartFilter = this.getView().byId("sfbPrdCons");
+                oSmartFilter.setModel(oModel);
+                oSmartFilter.addStyleClass("hide");
+
                 this.closeLoadingDialog();
             },
 
@@ -204,6 +209,11 @@ sap.ui.define([
                 })
             },
 
+            onSearchIO(oEvent) {
+                var oSmartFilter = _this.getView().byId("sfbPrdCons");
+                oSmartFilter.showFilterDialog();
+            },
+
             showLoadingDialog(arg) {
                 if (!_this._LoadingDialog) {
                     _this._LoadingDialog = sap.ui.xmlfragment("zuiprdconsump.view.fragments.LoadingDialog", _this);
@@ -320,12 +330,11 @@ sap.ui.define([
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 
                 // Smart Filter
-                oDDTextParam.push({CODE: "SBU"});
-                oDDTextParam.push({CODE: "DLVTYPE"});
-                oDDTextParam.push({CODE: "DLVNO"});
-                oDDTextParam.push({CODE: "ISSPLANT"});
-                oDDTextParam.push({CODE: "RCVPLANT"});
-                oDDTextParam.push({CODE: "REFDLVNO"});
+                oDDTextParam.push({CODE: "PLANTCD"});
+                oDDTextParam.push({CODE: "IONO"});
+                oDDTextParam.push({CODE: "PROCESSCD"});
+                oDDTextParam.push({CODE: "STYLENO"});
+                oDDTextParam.push({CODE: "SEASON"});
 
                 // Label
                 oDDTextParam.push({CODE: "DLVDTL"});
