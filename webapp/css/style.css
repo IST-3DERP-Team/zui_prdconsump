@@ -3,3 +3,7 @@
 .hide {
     display: none;
 }
+
+.activeRow {
+    background-color: #e1ebf3 !important;
+}

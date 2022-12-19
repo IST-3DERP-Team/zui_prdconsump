@@ -5,8 +5,10 @@
             <EntityType Name="IO" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="IONO"/>
+                    <PropertyRef Name="SEQNO"/>
+                    <PropertyRef Name="PROCESSCD"/>
                 </Key>
-                <Property Name="PLANT" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="PLANT" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PLANTCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="PLANTCD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="DESCRIP" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="DESCRIP" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="SEQNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Seq Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -17,8 +19,11 @@
             </EntityType>
             <EntityType Name="Stock" sap:content-version="1">
                 <Key>
+                    <PropertyRef Name="IONO"/>
                     <PropertyRef Name="MATNO"/>
+                    <PropertyRef Name="PROCESSCD"/>
                 </Key>
+                <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="MATNO" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="MATNO" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="DESCRIP" Type="Edm.String" Nullable="false" MaxLength="1001" sap:unicode="false" sap:label="DESCRIP" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="BATCH" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Batch" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>

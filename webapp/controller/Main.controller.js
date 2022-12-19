@@ -19,6 +19,8 @@ sap.ui.define([
 
         var _this;
         var _oCaption = {};
+        var _aFilters;
+        var _sFilterGlobal;
 
         // shortcut for sap.ui.table.SortOrder
         var SortOrder = library.SortOrder;
@@ -214,6 +216,207 @@ sap.ui.define([
                 oSmartFilter.showFilterDialog();
             },
 
+            onSearch(oEvent) {
+                this.showLoadingDialog("Loading...");
+
+                var aFilters = this.getView().byId("sfbPrdCons").getFilters();
+                var sFilterGlobal = "";
+                if (oEvent) sFilterGlobal = oEvent.getSource()._oBasicSearchField.mProperties.value;
+                
+                _aFilters = aFilters;
+                _sFilterGlobal = sFilterGlobal;
+                this.getIO(aFilters, sFilterGlobal);
+            },
+
+            getIO(pFilters, pFilterGlobal) {
+                _this.showLoadingDialog("Loading...");
+
+                var oModel = this.getOwnerComponent().getModel();
+
+                var sPlantCd = "";
+                var sIONo = "";
+                var sProcessCd = "";
+                var sStyleCd = "";
+                var sSeasonCd = "";
+
+                if (pFilters.length > 0 && pFilters[0].aFilters) {
+                    pFilters[0].aFilters.forEach(x => {
+                        if (Object.keys(x).includes("aFilters")) {
+                            x.aFilters.forEach(y => {
+                                if (y.sPath.toUpperCase() == "PLANTCD") sPlantCd = y.oValue1;
+                                else if (y.sPath.toUpperCase() == "IONO") sIONo = y.oValue1;
+                                else if (y.sPath.toUpperCase() == "PROCESSCD") sProcessCd = y.oValue1;
+                                else if (y.sPath.toUpperCase() == "STYLECD") sStyleCd = y.oValue1;
+                                else if (y.sPath.toUpperCase() == "SEASONCD") sSeasonCd = y.oValue1;
+                            });
+                        } else {
+                            console.log(2)
+                            if (x.sPath.toUpperCase() == "PLANTCD") sPlantCd = x.oValue1;
+                            else if (x.sPath.toUpperCase() == "IONO") sIONo = x.oValue1;
+                            else if (x.sPath.toUpperCase() == "PROCESSCD") sProcessCd = x.oValue1;
+                            else if (x.sPath.toUpperCase() == "STYLECD") sStyleCd = x.oValue1;
+                            else if (x.sPath.toUpperCase() == "SEASONCD") sSeasonCd = x.oValue1;
+                        }
+                    });
+                } else {
+                    var sName = pFilters[0].sPath.toUpperCase();
+                    var sValue = pFilters[0].oValue1;
+                    if (sName == "PLANTCD") sPlantCd = sValue;
+                    else if (sName == "IONO") sIONo = sValue;
+                    else if (sName == "PROCESSCD") sProcessCd = sValue;
+                    else if (sName == "STYLECD") sStyleCd = sValue;
+                    else if (sName == "SEASONCD") sSeasonCd = sValue;
+                }
+
+                var sFilter = "PLANTCD eq '" + sPlantCd + "' and IONO eq '" + sIONo + "' and PROCESSCD eq '" + sProcessCd + 
+                    "' and STYLECD eq '" + sStyleCd + "' and SEASONCD eq '" + sSeasonCd + "'";
+
+                oModel.read('/IOSet', {
+                    urlParameters: {
+                        "$filter": sFilter
+                    },
+                    success: function (data, response) {
+                        console.log("IOSet", data)
+                        if (data.results.length > 0) {
+
+                            // var aFilterTab = [];
+                            // if (oTable.getBinding("rows")) {
+                            //     aFilterTab = oTable.getBinding("rows").aFilters;
+                            // }
+
+                            var oJSONModel = new sap.ui.model.json.JSONModel();
+                            oJSONModel.setData(data);
+                            _this.getView().setModel(oJSONModel, "io");
+                            _this._tableRendered = "ioTab";
+
+                            //_this.onFilterBySmart("outDelHdr", pFilters, pFilterGlobal, aFilterTab);
+
+                            _this.setRowReadMode("io");
+                        }
+
+                        // oTable.getColumns().forEach((col, idx) => {   
+                        //     if (col._oSorter) {
+                        //         oTable.sort(col, col.mProperties.sortOrder === "Ascending" ? SortOrder.Ascending : SortOrder.Descending, true);
+                        //     }
+                        // });
+
+                        var oTable = _this.getView().byId("ioTab");
+                        if (oTable.getBinding("rows").aIndices.length > 0) {
+                            var aIndices = oTable.getBinding("rows").aIndices;
+                            var sIONo = _this.getView().getModel("io").getData().results[aIndices[0]].IONO;
+                            var sProcessCd = _this.getView().getModel("io").getData().results[aIndices[0]].PROCESSCD;
+                            _this.getView().getModel("ui").setProperty("/activeIONo", sIONo);
+                            _this.getView().getModel("ui").setProperty("/activeProcessCd", sProcessCd);
+                            
+                            _this.getStock();
+                            _this.getMatDoc();
+                        } else {
+                            _this.getView().getModel("ui").setProperty("/activeIONo", "");
+                            _this.getView().getModel("ui").setProperty("/activeProcessCd", "");
+
+                            _this.getView().getModel("io").setProperty("/results", []);
+                            _this.getView().getModel("stock").setProperty("/results", []);
+                            _this.getView().getModel("matDoc").setProperty("/results", []);
+                        }
+
+                        _this.closeLoadingDialog();
+                    },
+                    error: function (err) { 
+                        console.log("error", err)
+                        _this.closeLoadingDialog();
+                    }
+                })
+            },
+
+            getStock() {
+                var sIONo = _this.getView().getModel("ui").getData().activeIONo;
+                var sProcessCd = _this.getView().getModel("ui").getData().activeProcessCd;
+
+                var oModel = this.getOwnerComponent().getModel();
+                oModel.read('/StockSet', {
+                    urlParameters: {
+                        "$filter": "IONO eq '" + sIONo + "' and PROCESSCD eq '" + sProcessCd + "'"
+                    },
+                    success: function (data, response) {
+                        console.log("StockSet", data)
+                        if (data.results.length > 0) {
+
+                            // var aFilterTab = [];
+                            // if (oTable.getBinding("rows")) {
+                            //     aFilterTab = oTable.getBinding("rows").aFilters;
+                            // }
+
+                            var oJSONModel = new sap.ui.model.json.JSONModel();
+                            oJSONModel.setData(data);
+                            _this.getView().setModel(oJSONModel, "stock");
+                            _this._tableRendered = "stockTab";
+
+                            _this.setRowReadMode("stock");
+                        }
+                    },
+                    error: function (err) { 
+                        console.log("error", err)
+                        _this.closeLoadingDialog();
+                    }
+                })
+            },
+
+            getMatDoc() {
+                var sIONo = _this.getView().getModel("ui").getData().activeIONo;
+                var sProcessCd = _this.getView().getModel("ui").getData().activeProcessCd;
+
+                var oModel = this.getOwnerComponent().getModel();
+                oModel.read('/MatDocSet', {
+                    urlParameters: {
+                        "$filter": "HDRTEXT eq '" + sIONo + " " + sProcessCd + "'"
+                    },
+                    success: function (data, response) {
+                        console.log("MatDocSet", data)
+                        if (data.results.length > 0) {
+
+                            // var aFilterTab = [];
+                            // if (oTable.getBinding("rows")) {
+                            //     aFilterTab = oTable.getBinding("rows").aFilters;
+                            // }
+
+                            var oJSONModel = new sap.ui.model.json.JSONModel();
+                            oJSONModel.setData(data);
+                            _this.getView().setModel(oJSONModel, "matDoc");
+                            _this._tableRendered = "matDocTab";
+
+                            _this.setRowReadMode("matDoc");
+                        }
+                    },
+                    error: function (err) { 
+                        console.log("error", err)
+                        _this.closeLoadingDialog();
+                    }
+                })
+            },
+
+            setRowReadMode(arg) {
+                var oTable = this.byId(arg + "Tab");
+                oTable.getColumns().forEach((col, idx) => {                    
+                    this._aColumns[arg].filter(item => item.label === col.getLabel().getText())
+                        .forEach(ci => {
+                            if (ci.type === "STRING" || ci.type === "NUMBER") {
+                                col.setTemplate(new sap.m.Text({
+                                    text: "{" + arg + ">" + ci.name + "}",
+                                    wrapping: false,
+                                    tooltip: "{" + arg + ">" + ci.name + "}"
+                                }));
+                            }
+                            else if (ci.type === "BOOLEAN") {
+                                col.setTemplate(new sap.m.CheckBox({selected: "{" + arg + ">" + ci.name + "}", editable: false}));
+                            }
+
+                            if (ci.required) {
+                                col.getLabel().removeStyleClass("requiredField");
+                            }
+                        })
+                })
+            },
+
             showLoadingDialog(arg) {
                 if (!_this._LoadingDialog) {
                     _this._LoadingDialog = sap.ui.xmlfragment("zuiprdconsump.view.fragments.LoadingDialog", _this);
@@ -238,11 +441,14 @@ sap.ui.define([
                 var oTable = oEvent.getSource();
                 var sModel;
 
-                if (oTable.getId().indexOf("outDelHdrTab") >= 0) {
-                    sModel = "outDelHdr";
+                if (oTable.getId().indexOf("ioTab") >= 0) {
+                    sModel = "io";
                 }
-                else if (oTable.getId().indexOf("outDelDtlTab") >= 0) {
-                    sModel = "outDelDtl";
+                else if (oTable.getId().indexOf("stockTab") >= 0) {
+                    sModel = "stock";
+                }
+                else if (oTable.getId().indexOf("matDocTab") >= 0) {
+                    sModel = "matDoc";
                 }
                 console.log("onFirstVisibleRowChanged", sModel)
 
@@ -272,11 +478,14 @@ sap.ui.define([
                 var oTable = oEvent.getSource();
                 var sModel;
 
-                if (oTable.getId().indexOf("outDelHdrTab") >= 0) {
-                    sModel = "outDelHdr";
+                if (oTable.getId().indexOf("ioTab") >= 0) {
+                    sModel = "io";
                 }
-                else if (oTable.getId().indexOf("outDelDtlTab") >= 0) {
-                    sModel = "outDelDtl";
+                else if (oTable.getId().indexOf("stockTab") >= 0) {
+                    sModel = "stock";
+                }
+                else if (oTable.getId().indexOf("matDocTab") >= 0) {
+                    sModel = "matDoc";
                 }
 
                 this.setActiveRowHighlight(sModel);
@@ -304,11 +513,14 @@ sap.ui.define([
                     var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
                     var sModel;
 
-                    if (oTable.getId().indexOf("outDelHdrTab") >= 0) {
-                        sModel = "outDelHdr";
+                    if (oTable.getId().indexOf("ioTab") >= 0) {
+                        sModel = "io";
                     }
-                    else if (oTable.getId().indexOf("outDelDtlTab") >= 0) {
-                        sModel = "outDelDtl";
+                    else if (oTable.getId().indexOf("stockTab") >= 0) {
+                        sModel = "stock";
+                    }
+                    else if (oTable.getId().indexOf("matDocTab") >= 0) {
+                        sModel = "matDoc";
                     }
 
                     oTable.getModel(sModel).getData().results.forEach(row => row.ACTIVE = "");

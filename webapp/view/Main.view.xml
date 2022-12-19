@@ -17,27 +17,27 @@
                         persistencyKey="3DERP_PrdConsKey" filterContainerWidth="14rem" useToolbar="true" showClearOnFB="true" initialise="onSFBInitialise">
                         <sfb:controlConfiguration>
                             <sfb:ControlConfiguration id="filterPlant" key="PLANTCD" groupId="_BASIC" label="{ddtext>/PLANTCD}" controlType="dropDownList" filterType="single"
-                                displayBehaviour="idOnly" mandatory="notMandatory" index="0">
+                                displayBehaviour="idAndDescription" mandatory="notMandatory" index="0">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
                             <sfb:ControlConfiguration id="filterIONo" key="IONO" groupId="_BASIC" label="{ddtext>/IONO}" controlType="dropDownList" filterType="single"
-                                displayBehaviour="idOnly" mandatory="notMandatory" index="1">
+                                displayBehaviour="idAndDescription" mandatory="notMandatory" index="1">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
                             <sfb:ControlConfiguration id="filterProcess" key="PROCESSCD" groupId="_BASIC" label="{ddtext>/PROCESSCD}" controlType="dropDownList" filterType="single"
-                                displayBehaviour="idOnly" mandatory="notMandatory" index="2">
+                                displayBehaviour="idAndDescription" mandatory="notMandatory" index="2">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
                             <sfb:ControlConfiguration id="filterStyle" key="STYLECD" groupId="_BASIC" label="{ddtext>/STYLENO}" controlType="dropDownList" filterType="single"
-                                displayBehaviour="idOnly" mandatory="notMandatory" index="3">
+                                displayBehaviour="idAndDescription" mandatory="notMandatory" index="3">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
                             <sfb:ControlConfiguration id="filterSeason" key="SEASONCD" groupId="_BASIC" label="{ddtext>/SEASON}" controlType="dropDownList" filterType="single"
-                                displayBehaviour="idOnly" mandatory="notMandatory" index="4">
+                                displayBehaviour="idAndDescription" mandatory="notMandatory" index="4">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:layoutData>
