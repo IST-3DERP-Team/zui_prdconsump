@@ -349,7 +349,8 @@
                 <Key>
                     <PropertyRef Name="PONumber"/>
                 </Key>
-                <Property Name="PONumber" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PONumber" Type="Edm.String" Nullable="false" sap:unicode="false" sap:label="PO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="No_Price_From_PO" Type="Edm.String" Nullable="false" sap:unicode="false" sap:label="No Price from PO" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <NavigationProperty Name="N_CreatePOHdrParam" Relationship="ZGW_3DERP_RFC_SRV.A_CreatePOHdrParam" FromRole="FromRole_A_CreatePOHdrParam" ToRole="ToRole_A_CreatePOHdrParam"/>
                 <NavigationProperty Name="N_CreatePOItemParam" Relationship="ZGW_3DERP_RFC_SRV.A_CreatePOItemParam" FromRole="FromRole_A_CreatePOItemParam" ToRole="ToRole_A_CreatePOItemParam"/>
                 <NavigationProperty Name="N_CreatePOItemSchedParam" Relationship="ZGW_3DERP_RFC_SRV.A_CreatePOItemSchedParam" FromRole="FromRole_A_CreatePOItemSchedParam" ToRole="ToRole_A_CreatePOItemSchedParam"/>
@@ -395,6 +396,10 @@
                 <Property Name="Charg" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="Batch Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Sakto" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="G/L Account Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Aufnr" Type="Edm.String" MaxLength="12" sap:unicode="false" sap:label="Order Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Over_Dlv_Tol" Type="Edm.Decimal" Precision="3" Scale="1" sap:unicode="false" sap:label="Over Delv Tolerance" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Unlimited_Dlv" Type="Edm.String" MaxLength="1" sap:unicode="false" sap:label="Unlimited Delv" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Under_Dlv_Tol" Type="Edm.Decimal" Precision="3" Scale="1" sap:unicode="false" sap:label="Under Delv Tolerance" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Info_Upd" Type="Edm.String" MaxLength="1" sap:unicode="false" sap:label="Update Info Record" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
             <EntityType Name="CreatePOAddtlDtls" sap:content-version="1">
                 <Key>

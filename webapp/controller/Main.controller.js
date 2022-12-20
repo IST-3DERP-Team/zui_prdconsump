@@ -52,7 +52,78 @@ sap.ui.define([
                 oSmartFilter.setModel(oModel);
                 oSmartFilter.addStyleClass("hide");
 
+                this._tableRendered = "";
+                var oTableEventDelegate = {
+                    onkeyup: function(oEvent){
+                        _this.onKeyUp(oEvent);
+                    },
+
+                    onAfterRendering: function(oEvent) {
+                        _this.onAfterTableRendering(oEvent);
+                    }
+                };
+
+                this.byId("ioTab").addEventDelegate(oTableEventDelegate);
+                this.byId("stockTab").addEventDelegate(oTableEventDelegate);
+                this.byId("matDocTab").addEventDelegate(oTableEventDelegate);
+
+                // Material Document Detail
+                this._MatDocDtlDialog = sap.ui.xmlfragment("zuiprdconsump.view.fragments.MatDocDtlDialog", this);
+                this._MatDocDtlDialog.setModel(
+                    new JSONModel({
+                        items: [],
+                        rowCount: 0
+                    })
+                )
+                this.getView().addDependent(this._MatDocDtlDialog);
+
                 this.closeLoadingDialog();
+            },
+
+            onKeyUp(oEvent) {
+                if ((oEvent.key == "ArrowUp" || oEvent.key == "ArrowDown") && oEvent.srcControl.sParentAggregationName == "rows") {
+                    var oTable = this.byId(oEvent.srcControl.sId).oParent;
+
+                    var sModel = "";
+                    if (oTable.getId().indexOf("ioTab") >= 0) sModel = "io";
+                    else if (oTable.getId().indexOf("stockTab") >= 0) sModel = "stock";
+                    else if (oTable.getId().indexOf("matDocTab") >= 0) sModel = "matDoc";
+
+                    if (sModel == "io") {
+                        var sRowId = this.byId(oEvent.srcControl.sId);
+                        var sRowPath = this.byId(oEvent.srcControl.sId).oBindingContexts["io"].sPath;
+                        var oRow = this.getView().getModel("io").getProperty(sRowPath);
+                        var sIONo = oRow.IONO;
+                        var sProcessCd = oRow.PROCESSCD;
+
+                        this.getView().getModel("ui").setProperty("/activeIONo", sIONo);
+                        this.getView().getModel("ui").setProperty("/activeProcessCd", sProcessCd);
+
+                        this.getStock();
+                        this.getMatDoc();
+                    }
+
+                    if (this.byId(oEvent.srcControl.sId).getBindingContext(sModel)) {
+                        var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext(sModel).sPath;
+
+                        oTable.getModel(sModel).getData().results.forEach(row => row.ACTIVE = "");
+                        oTable.getModel(sModel).setProperty(sRowPath + "/ACTIVE", "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext(sModel) && row.getBindingContext(sModel).sPath.replace("/results/", "") === sRowPath.replace("/results/", "")) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow")
+                        })
+                    }
+                }
+            },
+
+            onAfterTableRendering: function(oEvent) {
+                if (this._tableRendered !== "") {
+                    this.setActiveRowHighlight(this._tableRendered.replace("Tab", ""));
+                    this._tableRendered = "";
+                }
             },
 
             getColumns: async function() {
@@ -220,15 +291,15 @@ sap.ui.define([
                 this.showLoadingDialog("Loading...");
 
                 var aFilters = this.getView().byId("sfbPrdCons").getFilters();
-                var sFilterGlobal = "";
-                if (oEvent) sFilterGlobal = oEvent.getSource()._oBasicSearchField.mProperties.value;
+                // var sFilterGlobal = "";
+                // if (oEvent) sFilterGlobal = oEvent.getSource()._oBasicSearchField.mProperties.value;
                 
                 _aFilters = aFilters;
-                _sFilterGlobal = sFilterGlobal;
-                this.getIO(aFilters, sFilterGlobal);
+                //_sFilterGlobal = sFilterGlobal;
+                this.getIO(aFilters);
             },
 
-            getIO(pFilters, pFilterGlobal) {
+            getIO(pFilters) {
                 _this.showLoadingDialog("Loading...");
 
                 var oModel = this.getOwnerComponent().getModel();
@@ -394,6 +465,178 @@ sap.ui.define([
                 })
             },
 
+            onRefreshIO() {
+                _this.onSearch();
+            },
+
+            onPostConsumpStock() {
+                var oTable = this.byId("stockTab");
+                var aSelIdx = oTable.getSelectedIndices();
+
+                if (aSelIdx.length === 0) {
+                    MessageBox.information(_oCaption.INFO_NO_RECORD_SELECT);
+                    return;
+                }
+
+                var aOrigSelIdx = [];
+                aSelIdx.forEach(i => {
+                    aOrigSelIdx.push(oTable.getBinding("rows").aIndices[i]);
+                })
+
+                var oModelRFC = _this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
+                var oDataIO = _this.getView().getModel("io").getData().results[0];
+                var aData = _this.getView().getModel("stock").getData().results;
+                var oParam = {};
+                var sCurrentDate = sapDateFormat.format(new Date());
+
+                aOrigSelIdx.forEach(i => {
+                    var oData = aData[i];
+
+                    oParam["N_GOODSMVT_HEADER"] = [{
+                        PstngDate: sCurrentDate,
+                        DocDate: sCurrentDate,
+                        RefDocNo: "",
+                        HeaderTxt: oDataIO.IONO + " " + oDataIO.PROCESSCD
+                    }];
+
+                    oParam["N_GOODSMVT_CODE"] = [{
+                        GmCode: "03"
+                    }];
+
+                    oParam["N_GOODSMVT_PRINT_CTRL"] = [];
+                    oParam["N_GOODSMVT_HEADRET"] = [];
+
+                    oParam["N_GOODSMVT_ITEM"] = [{
+                        Material: oData.MATNO, 
+                        "Plant":oDataIO.PLANTCD, 
+                        "StgeLoc": oData.SLOC, 
+                        "Batch": oData.BATCH,
+                        "MoveType": "251", 
+                        "Vendor": oData.VENDORCD, 
+                        "EntryQnt": oData.QTY,
+                        "EntryUom": oData.UOM
+                    }]
+
+                    oParam["N_GOODSMVT_RETURN"] = [];
+                    
+                    oModelRFC.create("/GoodsMvt_CreateSet", oParam, {
+                        method: "POST",
+                        success: function(oResult, oResponse) {
+                            console.log("GoodsMvt_CreateSet", oResult, oResponse);
+
+                            // if (oResult.EReturnno.length > 0) {
+                            //     _this.getView().getModel("ui").setProperty("/activeDlvNo", oResult.EReturnno);
+                            //     _oHeader.dlvNo = oResult.EReturnno;
+                            //     _this.onAddHeader()
+                            // } else {
+                            //     var sMessage = oResult.N_GetNumberReturn.results[0].Type + ' - ' + oResult.N_GetNumberReturn.results[0].Message;
+                            //     sap.m.MessageBox.error(sMessage);
+                            // }
+                        },
+                        error: function(err) {
+                            console.log("GoodsMvt_CreateSet err", err);
+                            _this.closeLoadingDialog();
+                        }
+                    });
+                });
+            },
+
+            onRefreshStock() {
+                _this.getStock();
+            },
+
+            onCancelConsumpMatDoc() {
+                var oTable = this.byId("matDocTab");
+                var aSelIdx = oTable.getSelectedIndices();
+
+                if (aSelIdx.length === 0) {
+                    MessageBox.information(_oCaption.INFO_NO_RECORD_SELECT);
+                    return;
+                }
+
+                var aOrigSelIdx = [];
+                aSelIdx.forEach(i => {
+                    aOrigSelIdx.push(oTable.getBinding("rows").aIndices[i]);
+                })
+
+                var oModelRFC = _this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
+                var aData = _this.getView().getModel("stock").getData().results;
+                var oParam = {};
+
+                aOrigSelIdx.forEach(i => {
+                    var oData = aData[i];
+
+                    oParam["N_IT_DATA"].push({
+                        PostingDate: sapDateFormat.format(new Date(oData.POSTDT)),
+                        MatDoc: oData.MATDOC,
+                        MatDocYear: oData.MATDOCYEAR
+                    })
+                });
+
+                oModelRFC.create("/GoodsMvt_CancelSet", oParam, {
+                    method: "POST",
+                    success: function(oResult, oResponse) {
+                        console.log("GoodsMvt_CancelSet", oResult, oResponse);
+
+                        // if (oResult.EReturnno.length > 0) {
+                        //     _this.getView().getModel("ui").setProperty("/activeDlvNo", oResult.EReturnno);
+                        //     _oHeader.dlvNo = oResult.EReturnno;
+                        //     _this.onAddHeader()
+                        // } else {
+                        //     var sMessage = oResult.N_GetNumberReturn.results[0].Type + ' - ' + oResult.N_GetNumberReturn.results[0].Message;
+                        //     sap.m.MessageBox.error(sMessage);
+                        // }
+                    },
+                    error: function(err) {
+                        console.log("GoodsMvt_CancelSet err", err);
+                        _this.closeLoadingDialog();
+                    }
+                });
+            },
+
+            onDispDtlMatDoc() {
+                _this._MatDocDtlDialog.open();
+            },
+
+            onMatDocDtlClose() {
+                _this._MatDocDtlDialog.close();
+            },
+
+            onRefreshMatDoc() {
+                _this.getMatDoc();
+            },
+
+            onCellClickIO(oEvent) {
+                var sIONo = oEvent.getParameters().rowBindingContext.getObject().IONO;
+                var sProcessCd = oEvent.getParameters().rowBindingContext.getObject().PROCESSCD;
+
+                _this.getView().getModel("ui").setProperty("/activeIONo", sIONo);
+                _this.getView().getModel("ui").setProperty("/activeProcessCd", sProcessCd);
+
+                _this.onCellClick(oEvent);
+
+                // Clear Sort and Filter
+                this.clearSortFilter("stockTab");
+                this.clearSortFilter("matDocTab");
+            },
+
+            clearSortFilter(pTable) {
+                var oTable = this.byId(pTable);
+                var oColumns = oTable.getColumns();
+                for (var i = 0, l = oColumns.length; i < l; i++) {
+
+                    if (oColumns[i].getFiltered()) {
+                        oColumns[i].filter("");
+                        // oColumns[i].setFilterValue("");;
+                        // oColumns[i].setFiltered(false);
+                    }
+
+                    if (oColumns[i].getSorted()) {
+                        oColumns[i].setSorted(false);
+                    }
+                }
+            },
+
             setRowReadMode(arg) {
                 var oTable = this.byId(arg + "Tab");
                 oTable.getColumns().forEach((col, idx) => {                    
@@ -509,7 +752,7 @@ sap.ui.define([
 
             onCellClick: function(oEvent) {
                 if (oEvent.getParameters().rowBindingContext) {
-                    var oTable = oEvent.getSource(); //this.byId("ioMatListTab");
+                    var oTable = oEvent.getSource();
                     var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
                     var sModel;
 
@@ -549,7 +792,12 @@ sap.ui.define([
                 oDDTextParam.push({CODE: "SEASON"});
 
                 // Label
-                oDDTextParam.push({CODE: "DLVDTL"});
+                oDDTextParam.push({CODE: "IO"});
+                oDDTextParam.push({CODE: "STOCK"});
+                oDDTextParam.push({CODE: "MATDOC"});
+                oDDTextParam.push({CODE: "POSTCONSUMP"});
+                oDDTextParam.push({CODE: "CANCELCONSUMP"});
+                oDDTextParam.push({CODE: "DISPDTL"});
 
                 // MessageBox
                 oDDTextParam.push({CODE: "INFO_NO_SELECTED"});

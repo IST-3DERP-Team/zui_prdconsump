@@ -13,7 +13,7 @@
             <uiL:Splitter height="100%">
 
                 <Panel height="100%">
-                    <sfb:SmartFilterBar id="sfbPrdCons" entitySet="ZVB_3DERP_PRDCONS_FILTER" enableBasicSearch="true" search="onSearch" 
+                    <sfb:SmartFilterBar id="sfbPrdCons" entitySet="ZVB_3DERP_PRDCONS_FILTER" enableBasicSearch="false" search="onSearch" 
                         persistencyKey="3DERP_PrdConsKey" filterContainerWidth="14rem" useToolbar="true" showClearOnFB="true" initialise="onSFBInitialise">
                         <sfb:controlConfiguration>
                             <sfb:ControlConfiguration id="filterPlant" key="PLANTCD" groupId="_BASIC" label="{ddtext>/PLANTCD}" controlType="dropDownList" filterType="single"
@@ -54,7 +54,7 @@
                         enableCellFilter="true"
                         selectionMode="Single"
                         firstVisibleRowChanged="onFirstVisibleRowChanged"
-                        cellClick="onCellClick"
+                        cellClick="onCellClickIO"
                         sort="onSorted"
                         filter="onFilter"
                         columnFreeze="onColumnUpdated"
@@ -65,6 +65,7 @@
                         rowSelectionChange="onRowSelectionChange">
                         <uiT:extension>
                             <Toolbar>
+                                <Text text="{ddtext>/IO}" />
                                 <ToolbarSpacer/>
                                 <Button id="btnSearchIO" 
                                     icon="sap-icon://search"
@@ -107,7 +108,12 @@
                         rowSelectionChange="onRowSelectionChange">
                         <uiT:extension>
                             <Toolbar>
+                                <Text text="{ddtext>/STOCK}" />
                                 <ToolbarSpacer/>
+                                <Button id="btnPostConsumpStock" 
+                                    press="onPostConsumpStock"
+                                    text="{ddtext>/POSTCONSUMP}"
+                                    visible="true"/>
                                 <Button id="btnRefreshStock" 
                                     icon="sap-icon://refresh"
                                     press="onRefreshStock"
@@ -126,7 +132,7 @@
                         showColumnVisibilityMenu="true"
                         enableColumnFreeze="true"
                         enableCellFilter="true"
-                        selectionMode="Single"
+                        selectionMode="MultiToggle"
                         firstVisibleRowChanged="onFirstVisibleRowChanged"
                         cellClick="onCellClick"
                         sort="onSorted"
@@ -139,7 +145,16 @@
                         rowSelectionChange="onRowSelectionChange">
                         <uiT:extension>
                             <Toolbar>
+                                <Text text="{ddtext>/MATDOC}" />
                                 <ToolbarSpacer/>
+                                <Button id="btnCancelConsumpMatDoc" 
+                                    press="onCancelConsumpMatDoc"
+                                    text="{ddtext>/CANCELCONSUMP}"
+                                    visible="true"/>
+                                <Button id="btnDispDtlMatDoc" 
+                                    press="onDispDtlMatDoc"
+                                    text="{ddtext>/DISPDTL}"
+                                    visible="true"/>
                                 <Button id="btnRefreshMatDoc" 
                                     icon="sap-icon://refresh"
                                     press="onRefreshMatDoc"

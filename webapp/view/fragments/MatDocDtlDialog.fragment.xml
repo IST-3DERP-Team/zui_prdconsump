@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+        xmlns:f="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+        xmlns:uit="sap.ui.table"
+        fragmentName="fragment1">
+    <Dialog contentWidth="1300px"
+        contentHeight="350px"
+        title="{ddtext>/MATDOCDTL}"
+        resizable="true"
+        draggable="true">
+        <endButton>
+			<Button text="Close" press=".onMatDocDtlClose"/>
+		</endButton>
+        <uit:Table id="matDocDtlTab"
+            rows="{/items}"
+            selectionMode="Single"
+            selectionBehavior="RowOnly"
+            visibleRowCount="{/rowCount}"
+            >
+        </uit:Table>    
+    </Dialog>
+</core:FragmentDefinition>
