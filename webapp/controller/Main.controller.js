@@ -182,9 +182,15 @@ sap.ui.define([
                                 _this._aColumns["matDoc"] = aColumns["columns"];
                                 _this.addColumns(_this.byId("matDocTab"), aColumns["columns"], "matDoc");
                             }
+                            else if (modCode === 'PRDCONSUMPMDDTLMOD') {
+                                var aColumns = _this.setTableColumns(oColumns["matDocDtl"], oData.results);      
+                                _this._aColumns["matDocDtl"] = aColumns["columns"];
+                                _this.addColumns(sap.ui.getCore().byId("matDocDtlTab"), aColumns["columns"], "matDocDtl");
+                            }
                         }
                     },
                     error: function (err) {
+                        console.log("ColumnsSet error", err)
                         _this.closeLoadingDialog();
                     }
                 });
@@ -400,6 +406,8 @@ sap.ui.define([
             },
 
             getStock() {
+                _this.showLoadingDialog("Loading...");
+
                 var sIONo = _this.getView().getModel("ui").getData().activeIONo;
                 var sProcessCd = _this.getView().getModel("ui").getData().activeProcessCd;
 
@@ -424,6 +432,8 @@ sap.ui.define([
 
                             _this.setRowReadMode("stock");
                         }
+
+                        _this.closeLoadingDialog();
                     },
                     error: function (err) { 
                         console.log("error", err)
@@ -433,6 +443,8 @@ sap.ui.define([
             },
 
             getMatDoc() {
+                _this.showLoadingDialog("Loading...");
+
                 var sIONo = _this.getView().getModel("ui").getData().activeIONo;
                 var sProcessCd = _this.getView().getModel("ui").getData().activeProcessCd;
 
@@ -457,6 +469,8 @@ sap.ui.define([
 
                             _this.setRowReadMode("matDoc");
                         }
+
+                        _this.closeLoadingDialog();
                     },
                     error: function (err) { 
                         console.log("error", err)
@@ -470,11 +484,14 @@ sap.ui.define([
             },
 
             onPostConsumpStock() {
+                _this.showLoadingDialog("Loading...");
+
                 var oTable = this.byId("stockTab");
                 var aSelIdx = oTable.getSelectedIndices();
 
                 if (aSelIdx.length === 0) {
-                    MessageBox.information(_oCaption.INFO_NO_RECORD_SELECT);
+                    MessageBox.information(_oCaption.INFO_NO_SELECTED);
+                    _this.closeLoadingDialog();
                     return;
                 }
 
@@ -489,7 +506,7 @@ sap.ui.define([
                 var oParam = {};
                 var sCurrentDate = sapDateFormat.format(new Date());
 
-                aOrigSelIdx.forEach(i => {
+                aOrigSelIdx.forEach((i, idx) => {
                     var oData = aData[i];
 
                     oParam["N_GOODSMVT_HEADER"] = [{
@@ -524,14 +541,14 @@ sap.ui.define([
                         success: function(oResult, oResponse) {
                             console.log("GoodsMvt_CreateSet", oResult, oResponse);
 
-                            // if (oResult.EReturnno.length > 0) {
-                            //     _this.getView().getModel("ui").setProperty("/activeDlvNo", oResult.EReturnno);
-                            //     _oHeader.dlvNo = oResult.EReturnno;
-                            //     _this.onAddHeader()
-                            // } else {
-                            //     var sMessage = oResult.N_GetNumberReturn.results[0].Type + ' - ' + oResult.N_GetNumberReturn.results[0].Message;
-                            //     sap.m.MessageBox.error(sMessage);
-                            // }
+                            if (idx == aOrigSelIdx.length - 1) {
+                                var sMessage = oResult.N_GOODSMVT_RETURN.results[0].Message;
+                                sap.m.MessageBox.error(sMessage);
+                                
+                                _this.onRefreshStock();
+                                _this.onRefreshMatDoc();
+                                _this.closeLoadingDialog();
+                            }
                         },
                         error: function(err) {
                             console.log("GoodsMvt_CreateSet err", err);
@@ -546,16 +563,19 @@ sap.ui.define([
             },
 
             onCancelConsumpMatDoc() {
+                _this.showLoadingDialog("Loading...");
+
                 var oTable = this.byId("matDocTab");
                 var aSelIdx = oTable.getSelectedIndices();
 
                 if (aSelIdx.length === 0) {
-                    MessageBox.information(_oCaption.INFO_NO_RECORD_SELECT);
+                    MessageBox.information(_oCaption.INFO_NO_SELECTED);
+                    _this.closeLoadingDialog();
                     return;
                 }
 
                 var aOrigSelIdx = [];
-                aSelIdx.forEach(i => {
+                aSelIdx.forEach((i, idx) => {
                     aOrigSelIdx.push(oTable.getBinding("rows").aIndices[i]);
                 })
 
@@ -573,19 +593,24 @@ sap.ui.define([
                     })
                 });
 
+                oParam["N_ET_DATA"] = [];
+
                 oModelRFC.create("/GoodsMvt_CancelSet", oParam, {
                     method: "POST",
                     success: function(oResult, oResponse) {
                         console.log("GoodsMvt_CancelSet", oResult, oResponse);
 
-                        // if (oResult.EReturnno.length > 0) {
-                        //     _this.getView().getModel("ui").setProperty("/activeDlvNo", oResult.EReturnno);
-                        //     _oHeader.dlvNo = oResult.EReturnno;
-                        //     _this.onAddHeader()
-                        // } else {
-                        //     var sMessage = oResult.N_GetNumberReturn.results[0].Type + ' - ' + oResult.N_GetNumberReturn.results[0].Message;
-                        //     sap.m.MessageBox.error(sMessage);
-                        // }
+                        var sMessage = "";
+
+                        oResult.N_ET_DATA.results.forEach(item => {
+                            sMessage += item.Message + "\n";
+                        })
+
+                        sap.m.MessageBox.error(sMessage);
+                        _this.onRefreshStock();
+                        _this.onRefreshMatDoc();
+
+                        _this.closeLoadingDialog();
                     },
                     error: function(err) {
                         console.log("GoodsMvt_CancelSet err", err);
@@ -595,7 +620,49 @@ sap.ui.define([
             },
 
             onDispDtlMatDoc() {
-                _this._MatDocDtlDialog.open();
+                _this.showLoadingDialog("Loading...");
+
+                var oTable = this.byId("matDocTab");
+                var aSelIdx = oTable.getSelectedIndices();
+
+                if (aSelIdx.length === 0) {
+                    MessageBox.information(_oCaption.INFO_NO_SELECTED);
+                    _this.closeLoadingDialog();
+                    return;
+                }
+
+                var aOrigSelIdx = [];
+                aSelIdx.forEach(i => {
+                    aOrigSelIdx.push(oTable.getBinding("rows").aIndices[i]);
+                })
+
+                var oMatDoc = _this.getView().getModel("matDoc").getProperty("/results/" + aOrigSelIdx[0].toString());
+                var sMatDocNo = oMatDoc.MATDOCNO;
+                var sMatDocYear = oMatDoc.MATDOCYEAR;
+
+                var oModel = _this.getOwnerComponent().getModel();
+                oModel.read('/MatDocDtlSet', { 
+                    urlParameters: {
+                        "$filter": "MATDOCNO eq '" + sMatDocNo + "' and MATDOCYEAR eq '" + sMatDocYear + "'"
+                    },
+                    success: function (data, response) {
+                        console.log("MatDocDtlSet", data)
+    
+                        _this._MatDocDtlDialog.getModel().setProperty("/items", data.results);
+                        _this._MatDocDtlDialog.getModel().setProperty("/rowCount", data.results.length);
+                        _this._MatDocDtlDialog.open();
+    
+                        setTimeout(() => {
+                            _this.getDynamicColumns({}, "PRDCONSUMPMDDTLMOD", "ZDV_PRDCON_MDDTL");
+                        }, 100);
+    
+                        _this.closeLoadingDialog();
+                    },
+                    error: function (err) { 
+                        console.log("MatDocDtlSet error", err);
+                        _this.closeLoadingDialog();
+                    }
+                })
             },
 
             onMatDocDtlClose() {

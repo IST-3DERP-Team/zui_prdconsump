@@ -95,7 +95,7 @@
                         showColumnVisibilityMenu="true"
                         enableColumnFreeze="true"
                         enableCellFilter="true"
-                        selectionMode="Single"
+                        selectionMode="MultiToggle"
                         firstVisibleRowChanged="onFirstVisibleRowChanged"
                         cellClick="onCellClick"
                         sort="onSorted"
