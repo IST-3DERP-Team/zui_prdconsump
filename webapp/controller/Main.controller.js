@@ -40,6 +40,10 @@ sap.ui.define([
                     activeSbu: "VER"
                 }), "ui");
 
+                this.getView().setModel(new JSONModel({ results: []}), "io");
+                this.getView().setModel(new JSONModel({ results: []}), "stock");
+                this.getView().setModel(new JSONModel({ results: []}), "matDoc");
+
                 this.initializeComponent();
             },
 
@@ -301,7 +305,7 @@ sap.ui.define([
                 // if (oEvent) sFilterGlobal = oEvent.getSource()._oBasicSearchField.mProperties.value;
                 
                 _aFilters = aFilters;
-                //_sFilterGlobal = sFilterGlobal;
+                // _sFilterGlobal = sFilterGlobal;
                 this.getIO(aFilters);
             },
 
@@ -354,39 +358,39 @@ sap.ui.define([
                     },
                     success: function (data, response) {
                         console.log("IOSet", data)
-                        if (data.results.length > 0) {
 
-                            // var aFilterTab = [];
-                            // if (oTable.getBinding("rows")) {
-                            //     aFilterTab = oTable.getBinding("rows").aFilters;
-                            // }
+                        if (data.results.length > 0) {
+                            var oTable = _this.getView().byId("ioTab");
+                            var aFilterTab = [];
+                            if (oTable.getBinding("rows")) {
+                                aFilterTab = oTable.getBinding("rows").aFilters;
+                            }
 
                             var oJSONModel = new sap.ui.model.json.JSONModel();
                             oJSONModel.setData(data);
                             _this.getView().setModel(oJSONModel, "io");
                             _this._tableRendered = "ioTab";
-
-                            //_this.onFilterBySmart("outDelHdr", pFilters, pFilterGlobal, aFilterTab);
+                            
+                            _this.onFilterBySmart("io", pFilters, "", aFilterTab);
 
                             _this.setRowReadMode("io");
-                        }
 
-                        // oTable.getColumns().forEach((col, idx) => {   
-                        //     if (col._oSorter) {
-                        //         oTable.sort(col, col.mProperties.sortOrder === "Ascending" ? SortOrder.Ascending : SortOrder.Descending, true);
-                        //     }
-                        // });
+                            oTable.getColumns().forEach((col, idx) => {   
+                                if (col._oSorter) {
+                                    oTable.sort(col, col.mProperties.sortOrder === "Ascending" ? SortOrder.Ascending : SortOrder.Descending, true);
+                                }
+                            });
 
-                        var oTable = _this.getView().byId("ioTab");
-                        if (oTable.getBinding("rows").aIndices.length > 0) {
-                            var aIndices = oTable.getBinding("rows").aIndices;
-                            var sIONo = _this.getView().getModel("io").getData().results[aIndices[0]].IONO;
-                            var sProcessCd = _this.getView().getModel("io").getData().results[aIndices[0]].PROCESSCD;
-                            _this.getView().getModel("ui").setProperty("/activeIONo", sIONo);
-                            _this.getView().getModel("ui").setProperty("/activeProcessCd", sProcessCd);
-                            
-                            _this.getStock();
-                            _this.getMatDoc();
+                            if (oTable.getBinding("rows").aIndices.length > 0) {
+                                var aIndices = oTable.getBinding("rows").aIndices;
+                                var sIONo = _this.getView().getModel("io").getData().results[aIndices[0]].IONO;
+                                var sProcessCd = _this.getView().getModel("io").getData().results[aIndices[0]].PROCESSCD;
+                                _this.getView().getModel("ui").setProperty("/activeIONo", sIONo);
+                                _this.getView().getModel("ui").setProperty("/activeProcessCd", sProcessCd);
+                                
+                                _this.getStock();
+                                _this.getMatDoc();
+                            }
                         } else {
                             _this.getView().getModel("ui").setProperty("/activeIONo", "");
                             _this.getView().getModel("ui").setProperty("/activeProcessCd", "");
@@ -420,17 +424,22 @@ sap.ui.define([
                         console.log("StockSet", data)
                         if (data.results.length > 0) {
 
-                            // var aFilterTab = [];
-                            // if (oTable.getBinding("rows")) {
-                            //     aFilterTab = oTable.getBinding("rows").aFilters;
-                            // }
+                            var oTable = _this.getView().byId("stockTab");
+                            var aFilterTab = [];
+                            if (oTable.getBinding("rows")) {
+                                aFilterTab = oTable.getBinding("rows").aFilters;
+                            }
 
                             var oJSONModel = new sap.ui.model.json.JSONModel();
                             oJSONModel.setData(data);
                             _this.getView().setModel(oJSONModel, "stock");
                             _this._tableRendered = "stockTab";
 
+                            _this.onFilterByCol("stock", aFilterTab);
+
                             _this.setRowReadMode("stock");
+                        } else {
+                            _this.getView().getModel("stock").setProperty("/results", []);
                         }
 
                         _this.closeLoadingDialog();
@@ -457,15 +466,23 @@ sap.ui.define([
                         console.log("MatDocSet", data)
                         if (data.results.length > 0) {
 
-                            // var aFilterTab = [];
-                            // if (oTable.getBinding("rows")) {
-                            //     aFilterTab = oTable.getBinding("rows").aFilters;
-                            // }
+                            data.results.forEach(item => {
+                                if (item.POSTDT !== null)
+                                    item.POSTDT = sapDateFormat.format(item.POSTDT)
+                            });
+
+                            var oTable = _this.getView().byId("matDocTab");
+                            var aFilterTab = [];
+                            if (oTable.getBinding("rows")) {
+                                aFilterTab = oTable.getBinding("rows").aFilters;
+                            }
 
                             var oJSONModel = new sap.ui.model.json.JSONModel();
                             oJSONModel.setData(data);
                             _this.getView().setModel(oJSONModel, "matDoc");
                             _this._tableRendered = "matDocTab";
+
+                            _this.onFilterByCol("matDoc", aFilterTab);
 
                             _this.setRowReadMode("matDoc");
                         }
@@ -725,6 +742,69 @@ sap.ui.define([
                             }
                         })
                 })
+            },
+
+            onFilterBySmart(pModel, pFilters, pFilterGlobal, pFilterTab) {
+                var oFilter = null;
+                var aFilter = [];
+                var aFilterGrp = [];
+                var aFilterCol = [];
+
+                console.log("onFilterBySmart", pFilters);
+                if (pFilters.length > 0 && pFilters[0].aFilters) {
+                    pFilters[0].aFilters.forEach(x => {
+                        if (Object.keys(x).includes("aFilters")) {
+                            
+                            x.aFilters.forEach(y => {
+                                console.log("aFilters", y, this._aColumns[pModel])
+                                var sName = this._aColumns[pModel].filter(item => item.name.toUpperCase() == y.sPath.toUpperCase())[0].name;
+                                aFilter.push(new Filter(sName, FilterOperator.Contains, y.oValue1));
+                            });
+                            var oFilterGrp = new Filter(aFilter, false);
+                            aFilterGrp.push(oFilterGrp);
+                            aFilter = [];
+                        } else {
+                            var sName = this._aColumns[pModel].filter(item => item.name.toUpperCase() == x.sPath.toUpperCase())[0].name;
+                            aFilter.push(new Filter(sName, FilterOperator.Contains, x.oValue1));
+                            var oFilterGrp = new Filter(aFilter, false);
+                            aFilterGrp.push(oFilterGrp);
+                            aFilter = [];
+                        }
+                    });
+                } else {
+                    var sName = pFilters[0].sPath;
+                    aFilter.push(new Filter(sName, FilterOperator.EQ,  pFilters[0].oValue1));
+                    var oFilterGrp = new Filter(aFilter, false);
+                    aFilterGrp.push(oFilterGrp);
+                    aFilter = [];
+                }
+
+                if (pFilterGlobal) {
+                    this._aColumns[pModel].forEach(item => {
+                        var sDataType = this._aColumns[pModel].filter(col => col.name === item.name)[0].type;
+                        if (sDataType === "Edm.Boolean") aFilter.push(new Filter(item.name, FilterOperator.EQ, pFilterGlobal));
+                        else aFilter.push(new Filter(item.name, FilterOperator.Contains, pFilterGlobal));
+                    })
+
+                    var oFilterGrp = new Filter(aFilter, false);
+                    aFilterGrp.push(oFilterGrp);
+                    aFilter = [];
+                }
+
+                oFilter = new Filter(aFilterGrp, true);
+
+                this.byId(pModel + "Tab").getBinding("rows").filter(oFilter, "Application");
+                _this.onFilterByCol(pModel, pFilterTab);
+            },
+
+            onFilterByCol(pModel, pFilterTab) {
+                if (pFilterTab.length > 0) {
+                    pFilterTab.forEach(item => {
+                        var iColIdx = _this._aColumns[pModel].findIndex(x => x.name == item.sPath);
+                        _this.getView().byId(pModel + "Tab").filter(_this.getView().byId(pModel + "Tab").getColumns()[iColIdx], 
+                            item.oValue1);
+                    });
+                }
             },
 
             showLoadingDialog(arg) {
