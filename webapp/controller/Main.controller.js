@@ -21,6 +21,7 @@ sap.ui.define([
         var _oCaption = {};
         var _aFilters;
         var _sFilterGlobal;
+        var _startUpInfo;
 
         // shortcut for sap.ui.table.SortOrder
         var SortOrder = library.SortOrder;
@@ -48,6 +49,12 @@ sap.ui.define([
             },
 
             initializeComponent() {
+                var oModelStartUp= new sap.ui.model.json.JSONModel();
+                oModelStartUp.loadData("/sap/bc/ui2/start_up").then(() => {
+                    _startUpInfo = oModelStartUp.oData
+                    console.log(oModelStartUp, oModelStartUp.oData);
+                });
+
                 this.getCaption();
                 this.getColumns();
 
@@ -310,7 +317,7 @@ sap.ui.define([
             },
 
             getIO(pFilters) {
-                _this.showLoadingDialog("Loading...");
+                //_this.showLoadingDialog("Loading...");
 
                 var oModel = this.getOwnerComponent().getModel();
 
@@ -331,7 +338,6 @@ sap.ui.define([
                                 else if (y.sPath.toUpperCase() == "SEASONCD") sSeasonCd = y.oValue1;
                             });
                         } else {
-                            console.log(2)
                             if (x.sPath.toUpperCase() == "PLANTCD") sPlantCd = x.oValue1;
                             else if (x.sPath.toUpperCase() == "IONO") sIONo = x.oValue1;
                             else if (x.sPath.toUpperCase() == "PROCESSCD") sProcessCd = x.oValue1;
@@ -339,7 +345,7 @@ sap.ui.define([
                             else if (x.sPath.toUpperCase() == "SEASONCD") sSeasonCd = x.oValue1;
                         }
                     });
-                } else {
+                } else if (pFilters.length > 0) {
                     var sName = pFilters[0].sPath.toUpperCase();
                     var sValue = pFilters[0].oValue1;
                     if (sName == "PLANTCD") sPlantCd = sValue;
@@ -347,6 +353,12 @@ sap.ui.define([
                     else if (sName == "PROCESSCD") sProcessCd = sValue;
                     else if (sName == "STYLECD") sStyleCd = sValue;
                     else if (sName == "SEASONCD") sSeasonCd = sValue;
+                } else {
+                    sPlantCd = "";
+                    sIONo = "",
+                    sProcessCd = "";
+                    sStyleCd = "";
+                    sSeasonCd = "";
                 }
 
                 var sFilter = "PLANTCD eq '" + sPlantCd + "' and IONO eq '" + sIONo + "' and PROCESSCD eq '" + sProcessCd + 
@@ -371,7 +383,11 @@ sap.ui.define([
                             _this.getView().setModel(oJSONModel, "io");
                             _this._tableRendered = "ioTab";
                             
-                            _this.onFilterBySmart("io", pFilters, "", aFilterTab);
+                            if (pFilters.length > 0) {
+                                _this.onFilterBySmart("io", pFilters, "", aFilterTab);
+                            } else {
+                                _this.onFilterByCol("io", aFilterTab);
+                            }
 
                             _this.setRowReadMode("io");
 
@@ -410,7 +426,7 @@ sap.ui.define([
             },
 
             getStock() {
-                _this.showLoadingDialog("Loading...");
+                //_this.showLoadingDialog("Loading...");
 
                 var sIONo = _this.getView().getModel("ui").getData().activeIONo;
                 var sProcessCd = _this.getView().getModel("ui").getData().activeProcessCd;
@@ -452,7 +468,7 @@ sap.ui.define([
             },
 
             getMatDoc() {
-                _this.showLoadingDialog("Loading...");
+                //_this.showLoadingDialog("Loading...");
 
                 var sIONo = _this.getView().getModel("ui").getData().activeIONo;
                 var sProcessCd = _this.getView().getModel("ui").getData().activeProcessCd;
@@ -529,7 +545,8 @@ sap.ui.define([
                     oParam["N_GOODSMVT_HEADER"] = [{
                         PstngDate: sCurrentDate,
                         DocDate: sCurrentDate,
-                        RefDocNo: "",
+                        RefDocNo: oDataIO.IONO + " " + oDataIO.PROCESSCD,
+                        PrUname: _startUpInfo.id,
                         HeaderTxt: oDataIO.IONO + " " + oDataIO.PROCESSCD
                     }];
 
@@ -541,14 +558,15 @@ sap.ui.define([
                     oParam["N_GOODSMVT_HEADRET"] = [];
 
                     oParam["N_GOODSMVT_ITEM"] = [{
-                        Material: oData.MATNO, 
+                        "Material": oData.MATNO, 
                         "Plant":oDataIO.PLANTCD, 
                         "StgeLoc": oData.SLOC, 
                         "Batch": oData.BATCH,
-                        "MoveType": "251", 
-                        "Vendor": oData.VENDORCD, 
+                        "MoveType": "917", 
                         "EntryQnt": oData.QTY,
-                        "EntryUom": oData.UOM
+                        "EntryUom": oData.UOM,
+                        "Costcenter": "VHKLSC004",
+                        "Orderid": oDataIO.IONO
                     }]
 
                     oParam["N_GOODSMVT_RETURN"] = [];
@@ -696,6 +714,8 @@ sap.ui.define([
 
                 _this.getView().getModel("ui").setProperty("/activeIONo", sIONo);
                 _this.getView().getModel("ui").setProperty("/activeProcessCd", sProcessCd);
+
+                _this.getIO(_aFilters);
 
                 _this.onCellClick(oEvent);
 
