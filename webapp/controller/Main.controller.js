@@ -543,8 +543,8 @@ sap.ui.define([
                     var oData = aData[i];
 
                     oParam["N_GOODSMVT_HEADER"] = [{
-                        PstngDate: sCurrentDate,
-                        DocDate: sCurrentDate,
+                        PstngDate: sCurrentDate + "T00:00:00",
+                        DocDate: sCurrentDate + "T00:00:00",
                         RefDocNo: oDataIO.IONO + " " + oDataIO.PROCESSCD,
                         PrUname: _startUpInfo.id,
                         HeaderTxt: oDataIO.IONO + " " + oDataIO.PROCESSCD

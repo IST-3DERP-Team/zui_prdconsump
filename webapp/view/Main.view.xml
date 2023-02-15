@@ -21,23 +21,23 @@
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
-                            <sfb:ControlConfiguration id="filterIONo" key="IONO" groupId="_BASIC" label="{ddtext>/IONO}" controlType="dropDownList" filterType="single"
-                                displayBehaviour="idAndDescription" mandatory="notMandatory" index="1">
+                            <sfb:ControlConfiguration id="filterIONo" key="IONO" groupId="_BASIC" label="{ddtext>/IONO}"
+                                preventInitialDataFetchInValueHelpDialog="false" displayBehaviour="idAndDescription" mandatory="notMandatory" index="1">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
-                            <sfb:ControlConfiguration id="filterProcess" key="PROCESSCD" groupId="_BASIC" label="{ddtext>/PROCESSCD}" controlType="dropDownList" filterType="single"
-                                displayBehaviour="idAndDescription" mandatory="notMandatory" index="2">
+                            <sfb:ControlConfiguration id="filterProcess" key="PROCESSCD" groupId="_BASIC" label="{ddtext>/PROCESSCD}"
+                                preventInitialDataFetchInValueHelpDialog="false" displayBehaviour="idAndDescription" mandatory="notMandatory" index="2">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
-                            <sfb:ControlConfiguration id="filterStyle" key="STYLECD" groupId="_BASIC" label="{ddtext>/STYLENO}" controlType="dropDownList" filterType="single"
-                                displayBehaviour="idAndDescription" mandatory="notMandatory" index="3">
+                            <sfb:ControlConfiguration id="filterStyle" key="STYLECD" groupId="_BASIC" label="{ddtext>/STYLENO}"
+                                preventInitialDataFetchInValueHelpDialog="false" displayBehaviour="idAndDescription" mandatory="notMandatory" index="3">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
-                            <sfb:ControlConfiguration id="filterSeason" key="SEASONCD" groupId="_BASIC" label="{ddtext>/SEASON}" controlType="dropDownList" filterType="single"
-                                displayBehaviour="idAndDescription" mandatory="notMandatory" index="4">
+                            <sfb:ControlConfiguration id="filterSeason" key="SEASONCD" groupId="_BASIC" label="{ddtext>/SEASON}"
+                                preventInitialDataFetchInValueHelpDialog="false" displayBehaviour="idAndDescription" mandatory="notMandatory" index="4">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:layoutData>
