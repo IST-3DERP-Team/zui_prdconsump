@@ -502,6 +502,9 @@ sap.ui.define([
 
                             _this.setRowReadMode("matDoc");
                         }
+                        else {
+                            _this.getView().getModel("matDoc").setProperty("/results", []);
+                        }
 
                         _this.closeLoadingDialog();
                     },
@@ -570,7 +573,7 @@ sap.ui.define([
                     }]
 
                     oParam["N_GOODSMVT_RETURN"] = [];
-                    
+                    console.log("onPostConsumpStock", oParam)   
                     oModelRFC.create("/GoodsMvt_CreateSet", oParam, {
                         method: "POST",
                         success: function(oResult, oResponse) {
@@ -715,7 +718,8 @@ sap.ui.define([
                 _this.getView().getModel("ui").setProperty("/activeIONo", sIONo);
                 _this.getView().getModel("ui").setProperty("/activeProcessCd", sProcessCd);
 
-                _this.getIO(_aFilters);
+                this.getStock();
+                this.getMatDoc();
 
                 _this.onCellClick(oEvent);
 
