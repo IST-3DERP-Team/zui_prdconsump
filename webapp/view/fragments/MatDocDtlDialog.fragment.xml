@@ -13,11 +13,55 @@
 			<Button text="Close" press=".onMatDocDtlClose"/>
 		</endButton>
         <uit:Table id="matDocDtlTab"
-            rows="{/items}"
+            rows="{matDocDtl>/results}"
             selectionMode="Single"
             selectionBehavior="RowOnly"
             visibleRowCount="{/rowCount}"
             >
+            <uit:columns>
+                <uit:Column width="140px">
+                    <Label text="{ddtext>/MATNO}" />
+                    <uit:template>
+						 <Text text="{matDocDtl>MATNO}" />
+                    </uit:template>
+                </uit:Column>
+                <uit:Column width="200px">
+                    <Label text="{ddtext>/MATDESC}" />
+                    <uit:template>
+						 <Text text="{matDocDtl>MATDESC}" />
+                    </uit:template>
+                </uit:Column>
+                <uit:Column width="200px">
+                    <Label text="{ddtext>/ADDTLDESC}" />
+                    <uit:template>
+						 <Text text="{matDocDtl>ADDTLDESC}" />
+                    </uit:template>
+                </uit:Column>
+                <uit:Column width="140px">
+                    <Label text="{ddtext>/BATCH}" />
+                    <uit:template>
+						 <Text text="{matDocDtl>BATCH}" />
+                    </uit:template>
+                </uit:Column>
+                <uit:Column width="140px">
+                    <Label text="{ddtext>/SLOC}" />
+                    <uit:template>
+						 <Text text="{matDocDtl>SLOC}" />
+                    </uit:template>
+                </uit:Column>
+                <uit:Column width="140px" hAlign= "Right">
+                    <Label text="{ddtext>/QTY}" />
+                    <uit:template>
+						 <Text text="{matDocDtl>QTY}" />
+                    </uit:template>
+                </uit:Column>
+                <uit:Column width="140px">
+                    <Label text="{ddtext>/UOM}" />
+                    <uit:template>
+						 <Text text="{matDocDtl>UOM}" />
+                    </uit:template>
+                </uit:Column>
+            </uit:columns>
         </uit:Table>    
     </Dialog>
 </core:FragmentDefinition>

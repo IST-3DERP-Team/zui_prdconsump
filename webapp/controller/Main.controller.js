@@ -78,16 +78,6 @@ sap.ui.define([
                 this.byId("stockTab").addEventDelegate(oTableEventDelegate);
                 this.byId("matDocTab").addEventDelegate(oTableEventDelegate);
 
-                // Material Document Detail
-                this._MatDocDtlDialog = sap.ui.xmlfragment("zuiprdconsump.view.fragments.MatDocDtlDialog", this);
-                this._MatDocDtlDialog.setModel(
-                    new JSONModel({
-                        items: [],
-                        rowCount: 0
-                    })
-                )
-                this.getView().addDependent(this._MatDocDtlDialog);
-
                 this.closeLoadingDialog();
             },
 
@@ -397,6 +387,11 @@ sap.ui.define([
                                 }
                             });
 
+                            data.results.forEach((item, idx) => {
+                                if (idx == 0) item.ACTIVE = "X";
+                                else item.ACTIVE = "";
+                            })
+
                             if (oTable.getBinding("rows").aIndices.length > 0) {
                                 var aIndices = oTable.getBinding("rows").aIndices;
                                 var sIONo = _this.getView().getModel("io").getData().results[aIndices[0]].IONO;
@@ -581,7 +576,7 @@ sap.ui.define([
 
                             if (idx == aOrigSelIdx.length - 1) {
                                 var sMessage = oResult.N_GOODSMVT_RETURN.results[0].Message;
-                                sap.m.MessageBox.error(sMessage);
+                                sap.m.MessageBox.information(sMessage);
                                 
                                 _this.onRefreshStock();
                                 _this.onRefreshMatDoc();
@@ -618,21 +613,22 @@ sap.ui.define([
                 })
 
                 var oModelRFC = _this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
-                var aData = _this.getView().getModel("stock").getData().results;
-                var oParam = {};
+                var aData = _this.getView().getModel("matDoc").getData().results;
+                var oParam = {
+                    "N_IT_DATA": [],
+                    "N_ET_DATA": []
+                };
 
                 aOrigSelIdx.forEach(i => {
                     var oData = aData[i];
 
                     oParam["N_IT_DATA"].push({
-                        PostingDate: sapDateFormat.format(new Date(oData.POSTDT)),
-                        MatDoc: oData.MATDOC,
+                        PostingDate: sapDateFormat.format(new Date(oData.POSTDT)) + "T00:00:00",
+                        MatDoc: oData.MATDOCNO,
                         MatDocYear: oData.MATDOCYEAR
                     })
                 });
-
-                oParam["N_ET_DATA"] = [];
-
+                //console.log("onCancelConsumpMatDoc param", oParam);
                 oModelRFC.create("/GoodsMvt_CancelSet", oParam, {
                     method: "POST",
                     success: function(oResult, oResponse) {
@@ -644,7 +640,7 @@ sap.ui.define([
                             sMessage += item.Message + "\n";
                         })
 
-                        sap.m.MessageBox.error(sMessage);
+                        sap.m.MessageBox.information(sMessage);
                         _this.onRefreshStock();
                         _this.onRefreshMatDoc();
 
@@ -674,37 +670,91 @@ sap.ui.define([
                     aOrigSelIdx.push(oTable.getBinding("rows").aIndices[i]);
                 })
 
-                var oMatDoc = _this.getView().getModel("matDoc").getProperty("/results/" + aOrigSelIdx[0].toString());
-                var sMatDocNo = oMatDoc.MATDOCNO;
-                var sMatDocYear = oMatDoc.MATDOCYEAR;
-
                 var oModel = _this.getOwnerComponent().getModel();
-                oModel.read('/MatDocDtlSet', { 
-                    urlParameters: {
-                        "$filter": "MATDOCNO eq '" + sMatDocNo + "' and MATDOCYEAR eq '" + sMatDocYear + "'"
-                    },
-                    success: function (data, response) {
-                        console.log("MatDocDtlSet", data)
-    
-                        _this._MatDocDtlDialog.getModel().setProperty("/items", data.results);
-                        _this._MatDocDtlDialog.getModel().setProperty("/rowCount", data.results.length);
-                        _this._MatDocDtlDialog.open();
-    
-                        setTimeout(() => {
-                            _this.getDynamicColumns({}, "PRDCONSUMPMDDTLMOD", "ZDV_PRDCON_MDDTL");
-                        }, 100);
-    
-                        _this.closeLoadingDialog();
-                    },
-                    error: function (err) { 
-                        console.log("MatDocDtlSet error", err);
-                        _this.closeLoadingDialog();
-                    }
+                var aData = [];
+
+                aOrigSelIdx.forEach((item, idx) => {
+                    var oData = _this.getView().getModel("matDoc").getProperty("/results/" + item.toString());
+                    var sMatDocNo = oData.MATDOCNO;
+                    var sMatDocYear = oData.MATDOCYEAR;
+
+                    oModel.read('/MatDocDtlSet', { 
+                        urlParameters: {
+                            "$filter": "MATDOCNO eq '" + sMatDocNo + "' and MATDOCYEAR eq '" + sMatDocYear + "'"
+                        },
+                        success: function (data, response) {
+                            console.log("MatDocDtlSet", data)
+
+                            aData.push(...data.results);
+
+                            if (idx == aOrigSelIdx.length - 1) {
+                                var oJSONModel = new sap.ui.model.json.JSONModel();
+                                oJSONModel.setData({ results: aData });
+                                _this.getView().setModel(oJSONModel, "matDocDtl");
+        
+                                _this._MatDocDtlDialog = sap.ui.xmlfragment(_this.getView().getId(), "zuiprdconsump.view.fragments.MatDocDtlDialog", _this);
+                                _this._MatDocDtlDialog.setModel(oJSONModel);
+                                _this.getView().addDependent(_this._MatDocDtlDialog);
+            
+                                _this._MatDocDtlDialog.addStyleClass("sapUiSizeCompact");
+                                _this._MatDocDtlDialog.open();
+            
+                                _this.closeLoadingDialog();
+                            }
+                        },
+                        error: function (err) { 
+                            console.log("MatDocDtlSet error", err);
+                            _this.closeLoadingDialog();
+                        }
+                    })
                 })
+
+                // var oMatDoc = _this.getView().getModel("matDoc").getProperty("/results/" + aOrigSelIdx[0].toString());
+                // var sMatDocNo = oMatDoc.MATDOCNO;
+                // var sMatDocYear = oMatDoc.MATDOCYEAR;
+
+                // var oModel = _this.getOwnerComponent().getModel();
+                // oModel.read('/MatDocDtlSet', { 
+                //     urlParameters: {
+                //         "$filter": "MATDOCNO eq '" + sMatDocNo + "' and MATDOCYEAR eq '" + sMatDocYear + "'"
+                //     },
+                //     success: function (data, response) {
+                //         console.log("MatDocDtlSet", data)
+
+                //         var oJSONModel = new sap.ui.model.json.JSONModel();
+                //         oJSONModel.setData(data);
+                //         _this.getView().setModel(oJSONModel, "matDocDtl");
+
+                //         _this._MatDocDtlDialog = sap.ui.xmlfragment(_this.getView().getId(), "zuiprdconsump.view.fragments.MatDocDtlDialog", _this);
+                //         _this._MatDocDtlDialog.setModel(oJSONModel);
+                //         // this._MatDocDtlDialog.setModel(
+                //         //     new JSONModel({
+                //         //         items: [],
+                //         //         rowCount: 0
+                //         //     })
+                //         // )
+                //         _this.getView().addDependent(_this._MatDocDtlDialog);
+    
+                //         // _this._MatDocDtlDialog.getModel().setProperty("/matDocDtl", data.results);
+                //         // _this._MatDocDtlDialog.getModel().setProperty("/rowCount", data.results.length);
+                //         _this._MatDocDtlDialog.addStyleClass("sapUiSizeCompact");
+                //         _this._MatDocDtlDialog.open();
+    
+                //         // setTimeout(() => {
+                //         //     _this.getDynamicColumns({}, "PRDCONSUMPMDDTLMOD", "ZDV_PRDCON_MDDTL");
+                //         // }, 100);
+    
+                //         _this.closeLoadingDialog();
+                //     },
+                //     error: function (err) { 
+                //         console.log("MatDocDtlSet error", err);
+                //         _this.closeLoadingDialog();
+                //     }
+                // })
             },
 
             onMatDocDtlClose() {
-                _this._MatDocDtlDialog.close();
+                _this._MatDocDtlDialog.destroy(true);
             },
 
             onRefreshMatDoc() {
@@ -969,6 +1019,15 @@ sap.ui.define([
                 oDDTextParam.push({CODE: "POSTCONSUMP"});
                 oDDTextParam.push({CODE: "CANCELCONSUMP"});
                 oDDTextParam.push({CODE: "DISPDTL"});
+
+                // Dialog
+                oDDTextParam.push({CODE: "MATNO"});
+                oDDTextParam.push({CODE: "MATDESC"});
+                oDDTextParam.push({CODE: "ADDTLDESC"});
+                oDDTextParam.push({CODE: "BATCH"});
+                oDDTextParam.push({CODE: "SLOC"});
+                oDDTextParam.push({CODE: "QTY"});
+                oDDTextParam.push({CODE: "UOM"});
 
                 // MessageBox
                 oDDTextParam.push({CODE: "INFO_NO_SELECTED"});
