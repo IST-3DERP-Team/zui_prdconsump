@@ -6,7 +6,7 @@
         fragmentName="fragment1">
     <Dialog contentWidth="1300px"
         contentHeight="350px"
-        title="{ddtext>/MATDOCDTL}"
+        title="{caption>/MATDOCDTL}"
         resizable="true"
         draggable="true">
         <endButton>
@@ -20,43 +20,43 @@
             >
             <uit:columns>
                 <uit:Column width="140px">
-                    <Label text="{ddtext>/MATNO}" />
+                    <Label text="{caption>/MATNO}" />
                     <uit:template>
 						 <Text text="{matDocDtl>MATNO}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="200px">
-                    <Label text="{ddtext>/MATDESC}" />
+                    <Label text="{caption>/MATDESC}" />
                     <uit:template>
 						 <Text text="{matDocDtl>MATDESC}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="200px">
-                    <Label text="{ddtext>/ADDTLDESC}" />
+                    <Label text="{caption>/ADDTLDESC}" />
                     <uit:template>
 						 <Text text="{matDocDtl>ADDTLDESC}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="140px">
-                    <Label text="{ddtext>/BATCH}" />
+                    <Label text="{caption>/BATCH}" />
                     <uit:template>
 						 <Text text="{matDocDtl>BATCH}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="140px">
-                    <Label text="{ddtext>/SLOC}" />
+                    <Label text="{caption>/SLOC}" />
                     <uit:template>
 						 <Text text="{matDocDtl>SLOC}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="140px" hAlign= "Right">
-                    <Label text="{ddtext>/QTY}" />
+                    <Label text="{caption>/QTY}" />
                     <uit:template>
 						 <Text text="{matDocDtl>QTY}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="140px">
-                    <Label text="{ddtext>/UOM}" />
+                    <Label text="{caption>/UOM}" />
                     <uit:template>
 						 <Text text="{matDocDtl>UOM}" />
                     </uit:template>

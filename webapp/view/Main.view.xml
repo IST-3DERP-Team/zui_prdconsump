@@ -16,27 +16,27 @@
                     <sfb:SmartFilterBar id="sfbPrdCons" entitySet="ZVB_3DERP_PRDCONS_FILTER" enableBasicSearch="false" search="onSearch" 
                         persistencyKey="3DERP_PrdConsKey" filterContainerWidth="14rem" useToolbar="true" showClearOnFB="true" initialise="onSFBInitialise">
                         <sfb:controlConfiguration>
-                            <sfb:ControlConfiguration id="filterPlant" key="PLANTCD" groupId="_BASIC" label="{ddtext>/PLANTCD}" controlType="dropDownList" filterType="single"
+                            <sfb:ControlConfiguration id="filterPlant" key="PLANTCD" groupId="_BASIC" label="{caption>/PLANTCD}" controlType="dropDownList" filterType="single"
                                 displayBehaviour="idAndDescription" mandatory="notMandatory" index="0">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
-                            <sfb:ControlConfiguration id="filterIONo" key="IONO" groupId="_BASIC" label="{ddtext>/IONO}"
+                            <sfb:ControlConfiguration id="filterIONo" key="IONO" groupId="_BASIC" label="{caption>/IONO}"
                                 preventInitialDataFetchInValueHelpDialog="false" displayBehaviour="idAndDescription" mandatory="notMandatory" index="1">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
-                            <sfb:ControlConfiguration id="filterProcess" key="PROCESSCD" groupId="_BASIC" label="{ddtext>/PROCESSCD}"
+                            <sfb:ControlConfiguration id="filterProcess" key="PROCESSCD" groupId="_BASIC" label="{caption>/PROCESSCD}"
                                 preventInitialDataFetchInValueHelpDialog="false" displayBehaviour="idAndDescription" mandatory="notMandatory" index="2">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
-                            <sfb:ControlConfiguration id="filterStyle" key="STYLECD" groupId="_BASIC" label="{ddtext>/STYLENO}"
+                            <sfb:ControlConfiguration id="filterStyle" key="STYLECD" groupId="_BASIC" label="{caption>/STYLENO}"
                                 preventInitialDataFetchInValueHelpDialog="false" displayBehaviour="idAndDescription" mandatory="notMandatory" index="3">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
                         <sfb:controlConfiguration>
-                            <sfb:ControlConfiguration id="filterSeason" key="SEASONCD" groupId="_BASIC" label="{ddtext>/SEASON}"
+                            <sfb:ControlConfiguration id="filterSeason" key="SEASONCD" groupId="_BASIC" label="{caption>/SEASON}"
                                 preventInitialDataFetchInValueHelpDialog="false" displayBehaviour="idAndDescription" mandatory="notMandatory" index="4">
                             </sfb:ControlConfiguration>
                         </sfb:controlConfiguration>
@@ -65,15 +65,19 @@
                         rowSelectionChange="onRowSelectionChange">
                         <uiT:extension>
                             <Toolbar>
-                                <Text text="{ddtext>/IO}" />
+                                <Text text="{caption>/IO}" />
                                 <ToolbarSpacer/>
                                 <Button id="btnSearchIO" 
                                     icon="sap-icon://search"
                                     press="onSearchIO"
+                                    text="{caption>/SEARCH}"
+                                    tooltip="{caption>/SEARCH}"
                                     visible="true"/>
                                 <Button id="btnRefreshIO" 
                                     icon="sap-icon://refresh"
                                     press="onRefreshIO"
+                                    text="{caption>/REFRESH}"
+                                    tooltip="{caption>/REFRESH}"
                                     visible="true"/>
                             </Toolbar>
                         </uiT:extension>
@@ -108,15 +112,19 @@
                         rowSelectionChange="onRowSelectionChange">
                         <uiT:extension>
                             <Toolbar>
-                                <Text text="{ddtext>/STOCK}" />
+                                <Text text="{caption>/STOCK}" />
                                 <ToolbarSpacer/>
                                 <Button id="btnPostConsumpStock" 
+                                    icon="sap-icon://complete"
                                     press="onPostConsumpStock"
-                                    text="{ddtext>/POSTCONSUMP}"
+                                    text="{caption>/POSTCONSUMP}"
+                                    tooltip="{caption>/POSTCONSUMP}"
                                     visible="true"/>
                                 <Button id="btnRefreshStock" 
                                     icon="sap-icon://refresh"
                                     press="onRefreshStock"
+                                    text="{caption>/REFRESH}"
+                                    tooltip="{caption>/REFRESH}"
                                     visible="true"/>
                             </Toolbar>
                         </uiT:extension>
@@ -145,19 +153,25 @@
                         rowSelectionChange="onRowSelectionChange">
                         <uiT:extension>
                             <Toolbar>
-                                <Text text="{ddtext>/MATDOC}" />
+                                <Text text="{caption>/MATDOC}" />
                                 <ToolbarSpacer/>
                                 <Button id="btnCancelConsumpMatDoc" 
+                                    icon="sap-icon://decline"
                                     press="onCancelConsumpMatDoc"
-                                    text="{ddtext>/CANCELCONSUMP}"
+                                    text="{caption>/CANCELCONSUMP}"
+                                    tooltip="{caption>/CANCELCONSUMP}"
                                     visible="true"/>
                                 <Button id="btnDispDtlMatDoc" 
+                                    icon="sap-icon://hint"
                                     press="onDispDtlMatDoc"
-                                    text="{ddtext>/DISPDTL}"
+                                    text="{caption>/DISPDTL}"
+                                    tooltip="{caption>/DISPDTL}"
                                     visible="true"/>
                                 <Button id="btnRefreshMatDoc" 
                                     icon="sap-icon://refresh"
                                     press="onRefreshMatDoc"
+                                    text="{caption>/REFRESH}"
+                                    tooltip="{caption>/REFRESH}"
                                     visible="true"/>
                             </Toolbar>
                         </uiT:extension>
