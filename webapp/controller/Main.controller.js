@@ -33,7 +33,7 @@ sap.ui.define([
                 var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_PRDCONS_FILTER_CDS");
                 var oSmartFilter = this.getView().byId("sfbPrdCons");
                 oSmartFilter.setModel(oModel);
-                oSmartFilter.addStyleClass("hide");
+                //oSmartFilter.addStyleClass("hide");
 
                 this.initializeComponent();
             },
