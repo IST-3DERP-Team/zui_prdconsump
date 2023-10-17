@@ -77,9 +77,24 @@
                                 <Button id="btnRefreshIO" 
                                     icon="sap-icon://refresh"
                                     press="onRefreshIO"
-                                    text="{caption>/REFRESH}"
+                                    text=""
                                     tooltip="{caption>/REFRESH}"
                                     visible="true"/>
+                                <Button id="btnFullScreenIO" 
+                                    icon="sap-icon://full-screen"
+                                    press="onTableResize('io','Max')"
+                                    tooltip="{caption>/FULLSCREEN}"
+                                    visible="true" />
+                                <Button id="btnExitFullScreenIO" 
+                                    icon="sap-icon://exit-full-screen"
+                                    press="onTableResize('io','Min')"
+                                    tooltip="{caption>/EXITFULLSCREEN}"
+                                    visible="false" />
+                                <Button id="btnTabLayoutIO"
+                                    icon="sap-icon://grid" 
+                                    press="onSaveTableLayout"
+                                    tooltip="{caption>/SAVELAYOUT}" 
+                                    visible="true" />
                             </Toolbar>
                         </uiT:extension>
                         <uiT:layoutData>
@@ -92,7 +107,7 @@
                 <!-- </Panel> -->
                 </VBox>
 
-                <uiL:Splitter orientation="Vertical">
+                <uiL:Splitter id="splitVertical" orientation="Vertical">
                     
                     <uiT:Table id="stockTab"
                         class="tablePadding"
@@ -125,9 +140,24 @@
                                 <Button id="btnRefreshStock" 
                                     icon="sap-icon://refresh"
                                     press="onRefreshStock"
-                                    text="{caption>/REFRESH}"
+                                    text=""
                                     tooltip="{caption>/REFRESH}"
                                     visible="true"/>
+                                <Button id="btnFullScreenStock" 
+                                    icon="sap-icon://full-screen"
+                                    press="onTableResize('stock','Max')"
+                                    tooltip="{caption>/FULLSCREEN}"
+                                    visible="true" />
+                                <Button id="btnExitFullScreenStock" 
+                                    icon="sap-icon://exit-full-screen"
+                                    press="onTableResize('stock','Min')"
+                                    tooltip="{caption>/EXITFULLSCREEN}"
+                                    visible="false" />
+                                <Button id="btnTabLayoutStock"
+                                    icon="sap-icon://grid" 
+                                    press="onSaveTableLayout"
+                                    tooltip="{caption>/SAVELAYOUT}" 
+                                    visible="true" />
                             </Toolbar>
                         </uiT:extension>
                         <uiT:layoutData>
@@ -172,9 +202,24 @@
                                 <Button id="btnRefreshMatDoc" 
                                     icon="sap-icon://refresh"
                                     press="onRefreshMatDoc"
-                                    text="{caption>/REFRESH}"
+                                    text=""
                                     tooltip="{caption>/REFRESH}"
                                     visible="true"/>
+                                <Button id="btnFullScreenMatDoc" 
+                                    icon="sap-icon://full-screen"
+                                    press="onTableResize('matDoc','Max')"
+                                    tooltip="{caption>/FULLSCREEN}"
+                                    visible="true" />
+                                <Button id="btnExitFullScreenMatDoc" 
+                                    icon="sap-icon://exit-full-screen"
+                                    press="onTableResize('matDoc','Min')"
+                                    tooltip="{caption>/EXITFULLSCREEN}"
+                                    visible="false" />
+                                <Button id="btnTabLayoutMatDoc"
+                                    icon="sap-icon://grid" 
+                                    press="onSaveTableLayout"
+                                    tooltip="{caption>/SAVELAYOUT}" 
+                                    visible="true" />
                             </Toolbar>
                         </uiT:extension>
                         <uiT:layoutData>

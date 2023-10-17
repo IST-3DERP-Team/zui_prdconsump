@@ -181,7 +181,7 @@ sap.ui.define([
                 if (sColumnType === "NUMBER") {
                     return new sap.ui.table.Column({
                         id: pModel + "-" + sColumnId,
-                        label: sColumnLabel,
+                        label: new sap.m.Text({text: sColumnLabel}),
                         template: new sap.m.Text({ text: "{" + sColumnId + "}", wrapping: false }),
                         width: sColumnWidth + "px",
                         hAlign: "End",
@@ -195,7 +195,7 @@ sap.ui.define([
                 } else if (sColumnType === "BOOLEAN") {
                     return new sap.ui.table.Column({
                         id: pModel + "-" + sColumnId,
-                        label: sColumnLabel,
+                        label: new sap.m.Text({text: sColumnLabel}),
                         template: new sap.m.CheckBox({
                             selected: "{" + sColumnId + "}",
                             editable: false
@@ -212,7 +212,7 @@ sap.ui.define([
                 } else {
                     return new sap.ui.table.Column({
                         id: pModel + "-" + sColumnId,
-                        label: sColumnLabel,
+                        label: new sap.m.Text({text: sColumnLabel}),
                         template: _this.columnTemplate(sColumnId),
                         width: sColumnWidth + "px",
                         hAlign: "Left",

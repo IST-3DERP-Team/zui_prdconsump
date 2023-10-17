@@ -180,6 +180,12 @@ sap.ui.define([
                         console.log("IOSet", data)
 
                         if (data.results.length > 0) {
+
+                            data.results.forEach((item, idx) => {
+                                if (idx == 0) item.ACTIVE = "X";
+                                else item.ACTIVE = "";
+                            });
+
                             var oTable = _this.getView().byId("ioTab");
                             var aFilterTab = [];
                             if (oTable.getBinding("rows")) {
@@ -253,6 +259,11 @@ sap.ui.define([
                         console.log("StockSet", data)
                         if (data.results.length > 0) {
 
+                            data.results.forEach((item, idx) => {
+                                if (idx == 0) item.ACTIVE = "X";
+                                else item.ACTIVE = "";
+                            });
+
                             var oTable = _this.getView().byId("stockTab");
                             var aFilterTab = [];
                             if (oTable.getBinding("rows")) {
@@ -295,9 +306,11 @@ sap.ui.define([
                         console.log("MatDocSet", data)
                         if (data.results.length > 0) {
 
-                            data.results.forEach(item => {
-                                if (item.POSTDT !== null)
-                                    item.POSTDT = _this.formatDate(item.POSTDT)
+                            data.results.forEach((item, idx) => {
+                                if (item.POSTDT !== null) item.POSTDT = _this.formatDate(item.POSTDT)
+
+                                if (idx == 0) item.ACTIVE = "X";
+                                else item.ACTIVE = "";
                             });
 
                             var oTable = _this.getView().byId("matDocTab");
@@ -524,6 +537,11 @@ sap.ui.define([
                             aData.push(...data.results);
 
                             if (idx == aOrigSelIdx.length - 1) {
+                                aData.forEach((item, idx) => {
+                                    if (idx == 0) item.ACTIVE = "X";
+                                    else item.ACTIVE = "";
+                                });
+
                                 var oJSONModel = new sap.ui.model.json.JSONModel();
                                 oJSONModel.setData({ results: aData });
                                 _this.getView().setModel(oJSONModel, "matDocDtl");
@@ -610,6 +628,126 @@ sap.ui.define([
                 }
             },
 
+            onTableResize(pGroup, pType) {
+                if (pGroup == "io") {
+                    if (pType === "Max") {
+                        this.byId("btnFullScreenIO").setVisible(false);
+                        this.byId("btnExitFullScreenIO").setVisible(true);
+
+                        var oSplitterMain = new sap.ui.layout.SplitterLayoutData({size: "100%"});
+                        var oContMain = this.byId("vbPORel");
+                        oContMain.setLayoutData(oSplitterMain);
+                    }
+                    else {
+                        this.byId("btnFullScreenIO").setVisible(true);
+                        this.byId("btnExitFullScreenIO").setVisible(false);
+
+                        var oSplitterMain = new sap.ui.layout.SplitterLayoutData({size: "58%"});
+                        var oContMain = this.byId("vbPORel");
+                        oContMain.setLayoutData(oSplitterMain);
+                    }
+                }
+                else if (pGroup == "stock") {
+                    if (pType === "Max") {
+                        this.byId("btnFullScreenStock").setVisible(false);
+                        this.byId("btnExitFullScreenStock").setVisible(true);
+
+                        var oSplitterMain = new sap.ui.layout.SplitterLayoutData({size: "0%"});
+                        var oContMain = this.byId("vbPORel");
+                        oContMain.setLayoutData(oSplitterMain);
+
+                        var oSplitterDtl = new sap.ui.layout.SplitterLayoutData({size: "100%"});
+                        var oContDtl = this.byId("stockTab");
+                        oContDtl.setLayoutData(oSplitterDtl);
+                    }
+                    else {
+                        this.byId("btnFullScreenStock").setVisible(true);
+                        this.byId("btnExitFullScreenStock").setVisible(false);
+
+                        var oSplitterMain = new sap.ui.layout.SplitterLayoutData({size: "58%"});
+                        var oContMain = this.byId("vbPORel");
+                        oContMain.setLayoutData(oSplitterMain);
+
+                        var oSplitterDtl = new sap.ui.layout.SplitterLayoutData({size: "50%"});
+                        var oContDtl = this.byId("stockTab");
+                        oContDtl.setLayoutData(oSplitterDtl);
+                    }
+                }
+                else if (pGroup == "matDoc") {
+                    if (pType === "Max") {
+                        this.byId("btnFullScreenMatDoc").setVisible(false);
+                        this.byId("btnExitFullScreenMatDoc").setVisible(true);
+
+                        var oSplitterMain = new sap.ui.layout.SplitterLayoutData({size: "0%"});
+                        var oContMain = this.byId("vbPORel");
+                        oContMain.setLayoutData(oSplitterMain);
+
+                        var oSplitterDtl = new sap.ui.layout.SplitterLayoutData({size: "0%"});
+                        var oContDtl = this.byId("stockTab");
+                        oContDtl.setLayoutData(oSplitterDtl);
+                    }
+                    else {
+                        this.byId("btnFullScreenMatDoc").setVisible(true);
+                        this.byId("btnExitFullScreenMatDoc").setVisible(false);
+
+                        var oSplitterMain = new sap.ui.layout.SplitterLayoutData({size: "58%"});
+                        var oContMain = this.byId("vbPORel");
+                        oContMain.setLayoutData(oSplitterMain);
+
+                        var oSplitterDtl = new sap.ui.layout.SplitterLayoutData({size: "50%"});
+                        var oContDtl = this.byId("stockTab");
+                        oContDtl.setLayoutData(oSplitterDtl);
+                    }
+                }
+            },
+
+            onSaveTableLayout: function (oEvent) {
+                var ctr = 1;
+                var oTable = oEvent.getSource().oParent.oParent;
+                var oColumns = oTable.getColumns();
+                var sSBU = _this.getView().getModel("ui").getData().sbu;
+
+                var oParam = {
+                    "SBU": sSBU,
+                    "TYPE": "",
+                    "TABNAME": "",
+                    "TableLayoutToItems": []
+                };
+
+                _aTableProp.forEach(item => {
+                    if (item.tblModel == oTable.getBindingInfo("rows").model) {
+                        oParam['TYPE'] = item.modCode;
+                        oParam['TABNAME'] = item.tblSrc;
+                    }
+                });
+
+                oColumns.forEach((column) => {
+                    oParam.TableLayoutToItems.push({
+                        COLUMNNAME: column.mProperties.sortProperty,
+                        ORDER: ctr.toString(),
+                        SORTED: column.mProperties.sorted,
+                        SORTORDER: column.mProperties.sortOrder,
+                        SORTSEQ: "1",
+                        VISIBLE: column.mProperties.visible,
+                        WIDTH: column.mProperties.width.replace('px','')
+                    });
+
+                    ctr++;
+                });
+
+                var oModel = _this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                oModel.create("/TableLayoutSet", oParam, {
+                    method: "POST",
+                    success: function(data, oResponse) {
+                        MessageBox.information(_oCaption.INFO_LAYOUT_SAVE);
+                    },
+                    error: function(err) {
+                        MessageBox.error(err);
+                        _this.closeLoadingDialog();
+                    }
+                });                
+            },
+
             getCaption() {
                 var oJSONModel = new JSONModel();
                 var oDDTextParam = [];
@@ -634,6 +772,9 @@ sap.ui.define([
                 // Button
                 oDDTextParam.push({CODE: "SEARCH"});
                 oDDTextParam.push({CODE: "REFRESH"});
+                oDDTextParam.push({CODE: "FULLSCREEN"});
+                oDDTextParam.push({CODE: "EXITFULLSCREEN"});
+                oDDTextParam.push({CODE: "SAVELAYOUT"});
 
                 // Dialog
                 oDDTextParam.push({CODE: "MATNO"});
@@ -646,6 +787,7 @@ sap.ui.define([
 
                 // MessageBox
                 oDDTextParam.push({CODE: "INFO_NO_SELECTED"});
+                oDDTextParam.push({CODE: "INFO_LAYOUT_SAVE"});
                 
                 oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam  }, {
                     method: "POST",

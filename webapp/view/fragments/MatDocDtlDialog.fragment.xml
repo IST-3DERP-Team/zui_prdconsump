@@ -20,43 +20,43 @@
             >
             <uit:columns>
                 <uit:Column width="140px">
-                    <Label text="{caption>/MATNO}" />
+                    <Text text="{caption>/MATNO}" />
                     <uit:template>
 						 <Text text="{matDocDtl>MATNO}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="200px">
-                    <Label text="{caption>/MATDESC}" />
+                    <Text text="{caption>/MATDESC}" />
                     <uit:template>
 						 <Text text="{matDocDtl>MATDESC}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="200px">
-                    <Label text="{caption>/ADDTLDESC}" />
+                    <Text text="{caption>/ADDTLDESC}" />
                     <uit:template>
 						 <Text text="{matDocDtl>ADDTLDESC}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="140px">
-                    <Label text="{caption>/BATCH}" />
+                    <Text text="{caption>/BATCH}" />
                     <uit:template>
 						 <Text text="{matDocDtl>BATCH}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="140px">
-                    <Label text="{caption>/SLOC}" />
+                    <Text text="{caption>/SLOC}" />
                     <uit:template>
 						 <Text text="{matDocDtl>SLOC}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="140px" hAlign= "Right">
-                    <Label text="{caption>/QTY}" />
+                    <Text text="{caption>/QTY}" />
                     <uit:template>
 						 <Text text="{matDocDtl>QTY}" />
                     </uit:template>
                 </uit:Column>
                 <uit:Column width="140px">
-                    <Label text="{caption>/UOM}" />
+                    <Text text="{caption>/UOM}" />
                     <uit:template>
 						 <Text text="{matDocDtl>UOM}" />
                     </uit:template>
