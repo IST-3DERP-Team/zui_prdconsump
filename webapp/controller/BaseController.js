@@ -143,6 +143,7 @@ sap.ui.define([
                             
                             _this._aColumns[tblModel] = _this.setTableColumns(tblId, tblModel, oData.results)["columns"];
                             _this.setRowReadMode(tblModel);
+                            _this.getView().getModel("base").setProperty("/dataMode", "INIT");
                             
                             var tblProps = {
                                 aColumns: _this._aColumns[tblModel]
@@ -352,6 +353,8 @@ sap.ui.define([
             }
             
             TableFilter.applyColFilters(_this);
+
+            _this.getView().getModel("base").setProperty("/dataMode", "READ");
         },
 
         setRowCreateMode(pModel) {
@@ -483,6 +486,8 @@ sap.ui.define([
             this.byId(pModel + "Tab").getBinding("rows").filter(null, "Application");
             // Column filter
             this.clearSortFilter(pModel + "Tab");
+
+            _this.getView().getModel("base").setProperty("/dataMode", "NEW");
         },
 
         setRowEditMode(pModel) {
@@ -599,6 +604,8 @@ sap.ui.define([
             })
 
             _this.getView().getModel(pModel).getData().results.forEach(item => item.Edited = false);
+
+            _this.getView().getModel("base").setProperty("/dataMode", "EDIT");
         },
 
         handleValueHelp: function(oEvent) {
@@ -925,6 +932,18 @@ sap.ui.define([
                 this.setActiveRowHighlight(this._tableRendered.replace("Tab", ""));
                 this._tableRendered = "";
             } 
+        },
+
+        onTableClick(oEvent) {
+            var oControl = oEvent.srcControl;
+            var sTabId = oControl.sId.split("--")[oControl.sId.split("--").length - 1];
+
+            while (sTabId.substr(sTabId.length - 3) !== "Tab") {                    
+                oControl = oControl.oParent;
+                sTabId = oControl.sId.split("--")[oControl.sId.split("--").length - 1];
+            }
+            
+            this._sActiveTable = sTabId;
         },
 
         onFirstVisibleRowChanged: function (oEvent) {

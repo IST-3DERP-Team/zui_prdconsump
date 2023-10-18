@@ -9,6 +9,9 @@
     xmlns:core="sap.ui.core"
     height="100%">
     <Page id="page" enableScrolling="false" class="sapUiNoContentPadding" showHeader="false">
+        <dependents>
+            <core:CommandExecution id="CE_REFRESH" command="Refresh" enabled="true" execute="onRefreshHK" />
+        </dependents>
         <content>
             <uiL:Splitter height="100%" width="100%">
 
@@ -67,6 +70,7 @@
                         <uiT:extension>
                             <Toolbar>
                                 <Text text="{caption>/IO}" />
+                                <Text text=" ({ui>/rowCountIO} {caption>/ITEM(S)})" />
                                 <ToolbarSpacer/>
                                 <!-- <Button id="btnSearchIO" 
                                     icon="sap-icon://search"
@@ -130,6 +134,7 @@
                         <uiT:extension>
                             <Toolbar>
                                 <Text text="{caption>/STOCK}" />
+                                <Text text=" ({ui>/rowCountStock} {caption>/ITEM(S)})" />
                                 <ToolbarSpacer/>
                                 <Button id="btnPostConsumpStock" 
                                     icon="sap-icon://complete"
@@ -186,6 +191,7 @@
                         <uiT:extension>
                             <Toolbar>
                                 <Text text="{caption>/MATDOC}" />
+                                <Text text=" ({ui>/rowCountMatDoc} {caption>/ITEM(S)})" />
                                 <ToolbarSpacer/>
                                 <Button id="btnCancelConsumpMatDoc" 
                                     icon="sap-icon://decline"

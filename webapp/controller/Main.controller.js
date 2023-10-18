@@ -40,7 +40,10 @@ sap.ui.define([
 
             initializeComponent() {
                 this.getView().setModel(new JSONModel({
-                    sbu: "VER"
+                    sbu: "VER",
+                    rowCountIO: 0,
+                    rowCountStock: 0,
+                    rowCountMatDoc: 0
                 }), "ui");
 
                 this.onInitBase(_this, _this.getView().getModel("ui").getData().sbu);
@@ -74,6 +77,24 @@ sap.ui.define([
                 this.getView().setModel(new JSONModel({ results: []}), "stock");
                 this.getView().setModel(new JSONModel({ results: []}), "matDoc");
 
+                // IO
+                this.byId("btnRefreshIO").setEnabled(false);
+                this.byId("btnFullScreenIO").setEnabled(false);
+                this.byId("btnTabLayoutIO").setEnabled(false);
+
+                // Stock
+                this.byId("btnPostConsumpStock").setEnabled(false);
+                this.byId("btnRefreshStock").setEnabled(false);
+                this.byId("btnFullScreenStock").setEnabled(false);
+                this.byId("btnTabLayoutStock").setEnabled(false);
+
+                // MatDoc
+                this.byId("btnCancelConsumpMatDoc").setEnabled(false);
+                this.byId("btnDispDtlMatDoc").setEnabled(false);
+                this.byId("btnRefreshMatDoc").setEnabled(false);
+                this.byId("btnFullScreenMatDoc").setEnabled(false);
+                this.byId("btnTabLayoutMatDoc").setEnabled(false);
+
 
                 if (sap.ushell.Container) {
                     var oModelStartUp= new sap.ui.model.json.JSONModel();
@@ -93,6 +114,10 @@ sap.ui.define([
 
                     onAfterRendering: function(oEvent) {
                         _this.onAfterTableRendering(oEvent);
+                    },
+
+                    onclick: function(oEvent) {
+                        _this.onTableClick(oEvent);
                     }
                 };
 
@@ -100,6 +125,7 @@ sap.ui.define([
                 this.byId("stockTab").addEventDelegate(oTableEventDelegate);
                 this.byId("matDocTab").addEventDelegate(oTableEventDelegate);
 
+                this._sActiveTable = "ioTab";
                 this.closeLoadingDialog();
             },
 
@@ -122,60 +148,101 @@ sap.ui.define([
                 _aSmartFilter = aSmartFilter;
                 // _sFilterGlobal = sFilterGlobal;
                 this.getIO(aSmartFilter);
+
+                // IO
+                this.byId("btnRefreshIO").setEnabled(true);
+                this.byId("btnFullScreenIO").setEnabled(true);
+                this.byId("btnTabLayoutIO").setEnabled(true);
+
+                // Stock
+                this.byId("btnPostConsumpStock").setEnabled(true);
+                this.byId("btnRefreshStock").setEnabled(true);
+                this.byId("btnFullScreenStock").setEnabled(true);
+                this.byId("btnTabLayoutStock").setEnabled(true);
+
+                // MatDoc
+                this.byId("btnCancelConsumpMatDoc").setEnabled(true);
+                this.byId("btnDispDtlMatDoc").setEnabled(true);
+                this.byId("btnRefreshMatDoc").setEnabled(true);
+                this.byId("btnFullScreenMatDoc").setEnabled(true);
+                this.byId("btnTabLayoutMatDoc").setEnabled(true);
             },
 
             getIO(pFilters) {
                 //_this.showLoadingDialog("Loading...");
+                var oSmartFilter = this.getView().byId("sfbPrdCons").getFilters();
+                var aFilters = [],
+                    aFilter = [],
+                    aCustomFilter = [],
+                    aSmartFilter = [];
+
+                if (oSmartFilter.length > 0) {
+                    if (oSmartFilter[0].aFilters)  {
+                        oSmartFilter[0].aFilters.forEach(item => {
+                            if (item.aFilters === undefined) {
+                                aFilter.push(new Filter(item.sPath, item.sOperator, item.oValue1));
+                            }
+                            else {
+                                aFilters.push(item);
+                            }
+                        })
+    
+                        if (aFilter.length > 0) { aFilters.push(new Filter(aFilter, false)); }
+                    }
+                    else {
+                        var sName = pFilters[0].sPath;
+                        aFilters.push(new Filter(sName, FilterOperator.EQ, pFilters[0].oValue1));
+                    }
+                }
+                aSmartFilter.push(new Filter(aFilters, true));
 
                 var oModel = this.getOwnerComponent().getModel();
 
-                var sPlantCd = "";
-                var sIONo = "";
-                var sProcessCd = "";
-                var sStyleCd = "";
-                var sSeasonCd = "";
+                // var sPlantCd = "";
+                // var sIONo = "";
+                // var sProcessCd = "";
+                // var sStyleCd = "";
+                // var sSeasonCd = "";
 
-                if (pFilters.length > 0 && pFilters[0].aFilters) {
-                    pFilters[0].aFilters.forEach(x => {
-                        if (Object.keys(x).includes("aFilters")) {
-                            x.aFilters.forEach(y => {
-                                if (y.sPath.toUpperCase() == "PLANTCD") sPlantCd = y.oValue1;
-                                else if (y.sPath.toUpperCase() == "IONO") sIONo = y.oValue1;
-                                else if (y.sPath.toUpperCase() == "PROCESSCD") sProcessCd = y.oValue1;
-                                else if (y.sPath.toUpperCase() == "STYLECD") sStyleCd = y.oValue1;
-                                else if (y.sPath.toUpperCase() == "SEASONCD") sSeasonCd = y.oValue1;
-                            });
-                        } else {
-                            if (x.sPath.toUpperCase() == "PLANTCD") sPlantCd = x.oValue1;
-                            else if (x.sPath.toUpperCase() == "IONO") sIONo = x.oValue1;
-                            else if (x.sPath.toUpperCase() == "PROCESSCD") sProcessCd = x.oValue1;
-                            else if (x.sPath.toUpperCase() == "STYLECD") sStyleCd = x.oValue1;
-                            else if (x.sPath.toUpperCase() == "SEASONCD") sSeasonCd = x.oValue1;
-                        }
-                    });
-                } else if (pFilters.length > 0) {
-                    var sName = pFilters[0].sPath.toUpperCase();
-                    var sValue = pFilters[0].oValue1;
-                    if (sName == "PLANTCD") sPlantCd = sValue;
-                    else if (sName == "IONO") sIONo = sValue;
-                    else if (sName == "PROCESSCD") sProcessCd = sValue;
-                    else if (sName == "STYLECD") sStyleCd = sValue;
-                    else if (sName == "SEASONCD") sSeasonCd = sValue;
-                } else {
-                    sPlantCd = "";
-                    sIONo = "",
-                    sProcessCd = "";
-                    sStyleCd = "";
-                    sSeasonCd = "";
-                }
+                // if (pFilters.length > 0 && pFilters[0].aFilters) {
+                //     pFilters[0].aFilters.forEach(x => {
+                //         if (Object.keys(x).includes("aFilters")) {
+                //             x.aFilters.forEach(y => {
+                //                 if (y.sPath.toUpperCase() == "PLANTCD") sPlantCd = y.oValue1;
+                //                 else if (y.sPath.toUpperCase() == "IONO") sIONo = y.oValue1;
+                //                 else if (y.sPath.toUpperCase() == "PROCESSCD") sProcessCd = y.oValue1;
+                //                 else if (y.sPath.toUpperCase() == "STYLECD") sStyleCd = y.oValue1;
+                //                 else if (y.sPath.toUpperCase() == "SEASONCD") sSeasonCd = y.oValue1;
+                //             });
+                //         } else {
+                //             if (x.sPath.toUpperCase() == "PLANTCD") sPlantCd = x.oValue1;
+                //             else if (x.sPath.toUpperCase() == "IONO") sIONo = x.oValue1;
+                //             else if (x.sPath.toUpperCase() == "PROCESSCD") sProcessCd = x.oValue1;
+                //             else if (x.sPath.toUpperCase() == "STYLECD") sStyleCd = x.oValue1;
+                //             else if (x.sPath.toUpperCase() == "SEASONCD") sSeasonCd = x.oValue1;
+                //         }
+                //     });
+                // } else if (pFilters.length > 0) {
+                //     var sName = pFilters[0].sPath.toUpperCase();
+                //     var sValue = pFilters[0].oValue1;
+                //     if (sName == "PLANTCD") sPlantCd = sValue;
+                //     else if (sName == "IONO") sIONo = sValue;
+                //     else if (sName == "PROCESSCD") sProcessCd = sValue;
+                //     else if (sName == "STYLECD") sStyleCd = sValue;
+                //     else if (sName == "SEASONCD") sSeasonCd = sValue;
+                // } else {
+                //     sPlantCd = "";
+                //     sIONo = "",
+                //     sProcessCd = "";
+                //     sStyleCd = "";
+                //     sSeasonCd = "";
+                // }
 
-                var sFilter = "PLANTCD eq '" + sPlantCd + "' and IONO eq '" + sIONo + "' and PROCESSCD eq '" + sProcessCd + 
-                    "' and STYLECD eq '" + sStyleCd + "' and SEASONCD eq '" + sSeasonCd + "'";
+                // var sFilter = "PLANTCD eq '" + sPlantCd + "' and IONO eq '" + sIONo + "' and PROCESSCD eq '" + sProcessCd + 
+                //     "' and STYLECD eq '" + sStyleCd + "' and SEASONCD eq '" + sSeasonCd + "'";
 
                 oModel.read('/IOSet', {
-                    urlParameters: {
-                        "$filter": sFilter
-                    },
+                    filters: aSmartFilter,
                     success: function (data, response) {
                         console.log("IOSet", data)
 
@@ -198,7 +265,7 @@ sap.ui.define([
                             _this._tableRendered = "ioTab";
                             
                             if (pFilters.length > 0) {
-                                _this.onFilterBySmart("io", pFilters, "", aFilterTab);
+                                //_this.onFilterBySmart("io", pFilters, "", aFilterTab);
                             } else {
                                 _this.onFilterByCol("io", aFilterTab);
                             }
@@ -234,6 +301,9 @@ sap.ui.define([
                             _this.getView().getModel("stock").setProperty("/results", []);
                             _this.getView().getModel("matDoc").setProperty("/results", []);
                         }
+
+                        // Set row count
+                        _this.getView().getModel("ui").setProperty("/rowCountIO", data.results.length);
 
                         _this.closeLoadingDialog();
                     },
@@ -281,6 +351,9 @@ sap.ui.define([
                         } else {
                             _this.getView().getModel("stock").setProperty("/results", []);
                         }
+
+                        // Set row count
+                        _this.getView().getModel("ui").setProperty("/rowCountStock", data.results.length);
 
                         _this.closeLoadingDialog();
                     },
@@ -331,6 +404,9 @@ sap.ui.define([
                         else {
                             _this.getView().getModel("matDoc").setProperty("/results", []);
                         }
+
+                        // Set row count
+                        _this.getView().getModel("ui").setProperty("/rowCountMatDoc", data.results.length);
 
                         _this.closeLoadingDialog();
                     },
@@ -589,6 +665,14 @@ sap.ui.define([
                 this.clearSortFilter("matDocTab");
             },
 
+            onRefreshHK() {
+                if (_this.getView().getModel("base").getData().dataMode == "READ") {
+                    if (this._sActiveTable === "ioTab") this.onRefreshIO();
+                    else if (this._sActiveTable === "stockTab") this.onRefreshStock();
+                    else if (this._sActiveTable === "matDocTab") this.onRefreshMatDoc();
+                }
+            },
+
             onKeyUp(oEvent) {
                 if ((oEvent.key == "ArrowUp" || oEvent.key == "ArrowDown") && oEvent.srcControl.sParentAggregationName == "rows") {
                     var oTable = this.byId(oEvent.srcControl.sId).oParent;
@@ -768,6 +852,7 @@ sap.ui.define([
                 oDDTextParam.push({CODE: "POSTCONSUMP"});
                 oDDTextParam.push({CODE: "CANCELCONSUMP"});
                 oDDTextParam.push({CODE: "DISPDTL"});
+                oDDTextParam.push({CODE: "ITEM(S)"});
 
                 // Button
                 oDDTextParam.push({CODE: "SEARCH"});
