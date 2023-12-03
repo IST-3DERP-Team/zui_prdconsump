@@ -441,7 +441,10 @@ sap.ui.define([
                 var oDataIO = _this.getView().getModel("io").getData().results[0];
                 var aData = _this.getView().getModel("stock").getData().results;
                 var sCurrentDate = _this.formatDate(new Date());
+                var sProfitctr = _this.getView().getModel("ui").getData().activePrctr;
                 var sMsg = "";
+
+
 
                 for(var i = 0; i < aOrigSelIdx.length; i++) {
                     var oData = aData[aOrigSelIdx[i]];
@@ -471,11 +474,14 @@ sap.ui.define([
                         "EntryQnt": oData.QTY,
                         "EntryUom": oData.UOM,
                         "Costcenter": "VHKLSC004",
-                        "Orderid": oDataIO.IONO
+                        "Orderid": oDataIO.IONO,
+                        "ProfitCtr" : sProfitctr
                     }]
 
                     oParam["N_GOODSMVT_RETURN"] = [];
 
+
+                    console.log("oParam",oParam);
                     sMsg += await _this.onPost(oParam) + "\n";
                 }
 
@@ -651,9 +657,11 @@ sap.ui.define([
             onCellClickIO(oEvent) {
                 var sIONo = oEvent.getParameters().rowBindingContext.getObject().IONO;
                 var sProcessCd = oEvent.getParameters().rowBindingContext.getObject().PROCESSCD;
-
+                var sPrctr = oEvent.getParameters().rowBindingContext.getObject().PRCTR;
+                
                 _this.getView().getModel("ui").setProperty("/activeIONo", sIONo);
                 _this.getView().getModel("ui").setProperty("/activeProcessCd", sProcessCd);
+                _this.getView().getModel("ui").setProperty("/activePrctr", sPrctr);
 
                 this.getStock();
                 this.getMatDoc();
