@@ -433,6 +433,13 @@ sap.ui.define([
                     return;
                 }
 
+                var sCostCenter = await _this.getCostCenter();
+                if (sCostCenter.length == 0) {
+                    MessageBox.information(_oCaption.INFO_NO_COSTCENTER_DEFINED);
+                    _this.closeLoadingDialog();
+                    return;
+                }
+
                 var aOrigSelIdx = [];
                 aSelIdx.forEach(i => {
                     aOrigSelIdx.push(oTable.getBinding("rows").aIndices[i]);
@@ -470,7 +477,7 @@ sap.ui.define([
                         "MoveType": "917", 
                         "EntryQnt": oData.QTY,
                         "EntryUom": oData.UOM,
-                        "Costcenter": "VHKLSC004",
+                        "Costcenter": sCostCenter, //"VHKLSC004",
                         "Orderid": oDataIO.IONO
                     }]
 
@@ -485,6 +492,35 @@ sap.ui.define([
                 _this.closeLoadingDialog();
 
                 MessageBox.information(sMsg);
+            },
+
+            getCostCenter() {
+                var sIONo = _this.getView().getModel("ui").getData().activeIONo;
+                var oData = _this.getView().getModel("io").getData().results.filter(x => x.IONO == sIONo)[0];
+
+                var oModel = this.getOwnerComponent().getModel();
+                console.log("param", oData.PLANTCD, oData.IONO)
+                return new Promise((resolve, reject) => {
+                    oModel.read('/CostCenterSet', {
+                        urlParameters: {
+                            "$filter": "PLANT eq '" + oData.PLANTCD + "' and TEXT eq '" + oData.IONO + "'"
+                        },
+                        success: function (data, response) {
+                            console.log("CostCenterSet", data);
+                            if (data.results.length > 0) {
+                                resolve(data.results[0].COST_CENTER1);
+                            }
+                            else {
+                                resolve("");
+                            }
+                        },
+                        error: function (err) { 
+                            console.log("error", err)
+                            resolve("");
+                            _this.closeLoadingDialog();
+                        }
+                    })
+                });
             },
 
             onPost(pParam) {
@@ -872,6 +908,7 @@ sap.ui.define([
 
                 // MessageBox
                 oDDTextParam.push({CODE: "INFO_NO_SELECTED"});
+                oDDTextParam.push({CODE: "INFO_NO_COSTCENTER_DEFINED"});
                 oDDTextParam.push({CODE: "INFO_LAYOUT_SAVE"});
                 
                 oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam  }, {
