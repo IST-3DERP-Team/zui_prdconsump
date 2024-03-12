@@ -97,14 +97,18 @@ sap.ui.define([
             _this.getView().getModel("base").setProperty("/appChange", bAppChange);
         },
    
-        getColumns(pTableList) {
+        getColumns: async function(pTableList) {
             _aTable = pTableList;
 
-            pTableList.forEach(item => {
-                setTimeout(() => {
-                    _this.getDynamicColumns(item);
-                }, 100);
-            });
+            for (var i = 0; i < pTableList.length; i++) {
+                await _this.getDynamicColumns(pTableList[i]);
+            }
+
+            // pTableList.forEach(item => {
+            //     setTimeout(() => {
+            //         _this.getDynamicColumns(item);
+            //     }, 100);
+            // });
         },
 
         getColumnProp: async function() {
@@ -116,7 +120,7 @@ sap.ui.define([
             _this._oModelColumns = oModelColumns.getData();
         },
 
-        getDynamicColumns: async function(pTable) {
+        getDynamicColumns: function(pTable) {
             var modCode = pTable.modCode;
             var tblSrc = pTable.tblSrc;
             var tblId = pTable.tblId;
@@ -343,6 +347,7 @@ sap.ui.define([
                         else if (ci.DataType === "BOOLEAN") {
                             col.setTemplate(new sap.m.CheckBox({
                                 selected: "{" + pModel + ">" + sColName + "}",
+                                editable: false
                             }));
                         }
                     })
